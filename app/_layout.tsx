@@ -2,20 +2,20 @@ import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import {  useEffect, useState } from 'react';
 import 'react-native-reanimated';
-
-import { PaperProvider } from 'react-native-paper';
 import { SessionProvider } from '@/hooks/useSession';
 import Login from './(app)/Login';
 import HomeScreen from './(app)';
-import { DefaultTheme } from 'react-native-paper';
+import { DefaultTheme,PaperProvider } from 'react-native-paper';
+import { Slot, Stack } from 'expo-router';
 
 //defaultTheme for React Native Paper
 const customTheme = {
   ...DefaultTheme,
-  dark: false,
-  roundness: 4,
+  dark:true,
+  roundness: 2,
   myOwnProperty: true,
   colors: {
+            ...DefaultTheme.colors,
             primary: "#DBC66E",
             surfaceTint: "#DBC66E",
             onPrimary: "#3A3000",
@@ -92,8 +92,7 @@ export default function RootLayout() {
   return (
     <SessionProvider>
       <PaperProvider theme={customTheme}>
-          <HomeScreen />
-          <Login />
+        <Stack/>
       </PaperProvider>
     </SessionProvider>
   );

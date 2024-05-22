@@ -5,7 +5,7 @@ import { View } from 'react-native';
 
 export default function Login() {
   return (
-      <ThemedView className="flex items-center justify-center" >
+      <ThemedView className="h-full flex items-center justify-center" >
         <Image source="@/assets/images/logo.png"  alt="proNote"/>
         <View className=''>
         </View>

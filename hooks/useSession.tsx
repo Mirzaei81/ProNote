@@ -1,13 +1,23 @@
 import React from 'react';
 import { useStorageState } from './useStorageState';
+import axios from "axios"
 
+const signIn = async (username:string,password:string)=>{
+  try{
+    const data = await axios.post('/login',{username: username, password: password })
+    console.log(data)
+  }catch (e){
+
+  }
+
+}
 const AuthContext = React.createContext<{
-  signIn: () => void;
+  signIn: (username:string,password:string) => void;
   signOut: () => void;
   session?: string | null;
   isLoading: boolean;
 }>({
-  signIn: () => null,
+  signIn: signIn,
   signOut: () => null,
   session: null,
   isLoading: false,
