@@ -22,7 +22,7 @@ describe('Testing /text endpoint', () => {
   test('Should return 201 for valid title and tags', async () => {
     const response = await appTesting
       .post('/text')
-      .send({ title: 'test', tags: 'test',body:"tesing",id:1 });
+      .send({ title: 'test', tags: 'test',body:"tesing",id:14 });
 
     expect(response.status).toBe(200);
     expect(response.body).toHaveProperty('message');

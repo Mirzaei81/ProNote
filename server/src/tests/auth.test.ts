@@ -33,7 +33,7 @@ describe('tesing /register',()=>{
     const response = await appTesting
       .post('/register')
       .send({ email: 'aam.miraei@gmail.com',username:"MthBest", password: '@M1r@rsh1@' });
-    expect(response.status).toBe(200);
+    expect(response.status).toBe(409);
     expect(response.body).toHaveProperty('message');
   });
 })

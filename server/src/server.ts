@@ -1,27 +1,17 @@
-import express,{Express} from "express"
-import dotenv from "dotenv"
-import cors from "cors"
-import bodyParser from "body-parser"
 import {getConnection} from "./Controller/index"
 import jwt from "jsonwebtoken"
-import encryptPass from "./encryptPass"
-import { RowDataPacket } from "mysql2"
+import {encryptPass,Matching} from "./encryptPass"
 import {findNullKeysRecursive} from "./checkForNull"
+import { CountResult, LoginResault } from "./types";
+import cors from "cors"
+import express,{Express} from "express"
+import bodyParser from "body-parser"
 
-
-dotenv.config()
-const myKey = process.env.PRIVATE_KEY||"MYPRIVATEKEY" // Change in prod
-
-export const app:Express = express();
-
+const myKey = process.env.PRIVATEKEY||"MySecret"
+const app:Express = express();
 app.use(cors())
 app.use(bodyParser.json())
 
-const port = process.env.PORT||3000;
-
-type CountResult = RowDataPacket & {
-  'COUNT(*)': number;
-};
 app.post('/register', async (req, res) => {
   const conn = await getConnection()
   try {
@@ -42,6 +32,7 @@ app.post('/register', async (req, res) => {
           "email": "Email address is already registered."
         }
       })
+      conn.release()
       return
     }
     const passHashed = encryptPass(password)
@@ -50,7 +41,6 @@ app.post('/register', async (req, res) => {
       'INSERT INTO users (`username`, `email`, `password`) VALUES (?, ?, ?);'
       ,[username,email,passHashed]
     )
-    console.log(data)
 
     conn.release()
     const Token = jwt.sign({username:username,passHashed:passHashed},myKey)
@@ -65,24 +55,28 @@ app.post('/login', async (req, res) => {
   const conn = await getConnection()
   try {
     const {username, password } = req.body;
-    const passHashed = await encryptPass(password)
-    console.log(passHashed)
-    const [data, fields] = await conn.query(
-      'select * from `users` where `username` = ? and `password` = ?  limit 1'
-      ,[username,passHashed]
+    const [data, fields] = await conn.query<LoginResault[]>(
+      'select * from `users` where `username` = ? limit 1'
+      ,[username]
     )
-    console.log(data)
     if (data.length === 0) {
+      conn.release()
       return res.status(401).json({ message: 'User Does not exist' });
     }
-    console.log(Object.getPrototypeOf(data))
-
-    const Token = jwt.sign({username:username,passHashed:passHashed},myKey)
-    res.status(200).json({ message: 'Logged in', user: data });
-
+    const match = await Matching(password,data[0].password)
+    if (match){
+      const Token = jwt.sign({username:username,passHashed:password},myKey)
+      res.status(200).json({ message: 'Logged in', user: data,Token:Token });
+    }
+    else{
+      res.status(401).json({ message: 'Password is Incorrect', user: data });
+    }
   } catch (error) {
     console.log(error)
     res.status(500).json({ message: 'Internal server error',error:error });
+  }
+  finally{
+    conn.release()
   }
 });
 
@@ -92,9 +86,9 @@ app.post('/text', async (req, res) => {
   try {
     const {tags,title,body,id} = req.body;
     const nullKeys:string[] =findNullKeysRecursive({id:id,body:body,title:title,tags:tags})
-    console.log(nullKeys)
     if (nullKeys.length!==0){
       res.status(400).json({message:`${nullKeys} Can't be null`})
+      conn.release()
       return;
     }
     const [data, fields] = await conn.execute(
@@ -102,17 +96,16 @@ app.post('/text', async (req, res) => {
       ,[tags,title,body,id]
     )
     res.json({ message: 'Succesfull' });
+      conn.release()
     return;
   } catch (error) {
     console.error(error)
     res.status(500).json({ message: 'Internal server error' });
-    return;
   } finally{
     conn.release()
   }
 });
 
-app.listen(port, () => {
-  console.log(`[server]: Server is running at http://localhost:${port}`);
-});
 
+
+export const  server =app

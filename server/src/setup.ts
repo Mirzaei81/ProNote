@@ -1,4 +1,4 @@
-import {app} from './server';
+import {server} from './server';
 import request from 'supertest';
 
-export const appTesting = request(app)
+export const appTesting = request(server)
