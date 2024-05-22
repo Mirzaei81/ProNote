@@ -1,8 +1,4 @@
-import { Image, StyleSheet, Platform } from 'react-native';
-
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
+import {  GestureResponderEvent, StyleSheet } from 'react-native';
 import { ThemedView } from '@/components/ThemedView';
 import React from 'react';
 import {
@@ -12,14 +8,16 @@ import {
   Text,
   StatusBar,
 } from 'react-native';
+import { SessionProvider, useSession } from '@/hooks/useSession';
+import { Image } from 'expo-image';
+import { Button } from 'react-native-paper';
+import { Link } from 'expo-router';
 
-const Item = ({title}: ItemProps) => (
-  <View style={styles.item}>
-    <Text style={styles.title}>{title}</Text>
-  </View>
+const Item = ({title,onPress}: ItemProps) => (
+  <Button mode="contained"  onPress={onPress}>{title}</Button>
 );
 
-type ItemProps = {title: string};
+type ItemProps = {title: string,onPress:((e: GestureResponderEvent) => void) | undefined}
 
 const DATA = [
   {
@@ -67,9 +65,19 @@ const DATA = [
 
 
 export default function HomeScreen() {
+  const {session,isLoading}  = useSession()
+  if (isLoading){
+    return(
+      <View className='bg-[#523E27]'>
+        <Image source="@/assets/images/logo.png" alt='proNote'/>
+      </View>
+    )
+  }
   return (
-      <ThemedView style={styles.titleContainer} >
-        <View className=''></View>
+      <ThemedView className='flex flex-row' >
+        <View >
+          <Text > hello World</Text>
+        </View>
         <SafeAreaView style={styles.container}>
           <FlatList
             data={DATA}
@@ -77,16 +85,14 @@ export default function HomeScreen() {
             keyExtractor={item => item.id}
           />
         </SafeAreaView>
+      <Link href="/login" asChild>
+        <Button mode="contained" dark>Login</Button>
+      </Link>
       </ThemedView>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
   stepContainer: {
     gap: 8,
     marginBottom: 8,

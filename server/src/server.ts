@@ -32,6 +32,7 @@ app.post('/register', async (req, res) => {
           "email": "Email address is already registered."
         }
       })
+
       conn.release()
       return
     }
