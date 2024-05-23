@@ -1,4 +1,4 @@
-import {getConnection} from "./Controller/index"
+import {getConnection} from "./Utils/index"
 import jwt from "jsonwebtoken"
 import {encryptPass,Matching} from "./encryptPass"
 import {findNullKeysRecursive} from "./checkForNull"
@@ -6,11 +6,13 @@ import { CountResult, LoginResault } from "./types";
 import cors from "cors"
 import express,{Express} from "express"
 import bodyParser from "body-parser"
+import { authenticateToken } from "./Utils/Verify";
 
 const myKey = process.env.PRIVATEKEY||"MySecret"
 const app:Express = express();
 app.use(cors())
 app.use(bodyParser.json())
+app.use('/note/',authenticateToken)//securing note route and injecting user context to it 
 
 app.post('/register', async (req, res) => {
   const conn = await getConnection()
@@ -66,7 +68,7 @@ app.post('/login', async (req, res) => {
     }
     const match = await Matching(password,data[0].password)
     if (match){
-      const Token = jwt.sign({username:username,passHashed:password},myKey)
+      const Token = jwt.sign({username:username,passHashed:password,id:data[0].id},myKey)
       res.status(200).json({ message: 'Logged in', user: data,Token:Token });
     }
     else{
@@ -80,13 +82,63 @@ app.post('/login', async (req, res) => {
     conn.release()
   }
 });
-
-// Text endpoint (not implemented)
-app.post('/text', async (req, res) => {
+//update
+app.put('/note/:id', async (req, res) => {
   const conn = await getConnection()
+  const {id} =  req.params;
   try {
-    const {tags,title,body,id} = req.body;
+    const {title,body} = req.body;
+    const nullKeys:string[] =findNullKeysRecursive({title:title,body:body})
+    if (nullKeys.length!==0){
+      res.status(400).json({message:`${nullKeys} Can't be null`})
+      conn.release()
+      return;
+    }
+    const [data, fields] = await conn.execute(
+      'UPDATE text_table SET body = ? , title = ? where id =? ;'
+      ,[title,body,id]
+    )
+    console.log(data)
+    res.json({ message: 'Succesfull' });
+      conn.release()
+    return;
+  } catch (error) {
+    console.log(error)
+    res.status(500).json({ message: 'Internal server error',error:error });
+  }
+  finally{
+    conn.release()
+  }
+});
+//delete
+app.delete('/note/:id', async (req, res) => {
+  const conn = await getConnection()
+  const {id} = req.params
+  const userId = req.user.id;
+  try {
+    const [data, fields] = await conn.execute(
+      'DELETE text_table where id = ? and `user_id` = ? ;'
+      ,[id,userId]
+    )
+    res.json({ message: 'Succesfull' });
+    conn.release()
+    return;
+  } catch (error) {
+    console.error(error)
+    res.status(500).json({ message: 'Internal server error' });
+  } finally{
+    conn.release()
+  }
+});
+// Text endpoint 
+app.post('/note/', async (req, res) => {
+  const conn = await getConnection()
+  const id = req.user.id;
+  try {
+    const {tags,title,body} = req.body;
+
     const nullKeys:string[] =findNullKeysRecursive({id:id,body:body,title:title,tags:tags})
+
     if (nullKeys.length!==0){
       res.status(400).json({message:`${nullKeys} Can't be null`})
       conn.release()
@@ -101,12 +153,61 @@ app.post('/text', async (req, res) => {
     return;
   } catch (error) {
     console.error(error)
+    res.status(400).json({ message: 'Title Should Be Uniqe' });
+  } finally{
+    conn.release()
+  }
+});
+// get allendpoint 
+app.get('/note/', async (req, res) => {
+  const conn = await getConnection()
+  try {
+    const id = req.user;
+    const nullKeys:string[] =findNullKeysRecursive({id:id})
+    if (nullKeys.length!==0){
+      res.status(400).json({message:`${nullKeys} Can't be null`})
+      conn.release()
+      return;
+    }
+    const [data, fields] = await conn.execute(
+      'SELECT * FROM text_table WHERE `user_id` = ? ;'
+      ,[id.id]
+    )
+    res.json({ message: 'Succesfull',data:data });
+      conn.release()
+    return;
+  } catch (error) {
+    console.error(error)
     res.status(500).json({ message: 'Internal server error' });
   } finally{
     conn.release()
   }
 });
 
-
+app.get('/note/', async (req, res) => {
+  const conn = await getConnection()
+  try {
+    const id = req.user;
+    console.log(id)
+    const nullKeys:string[] =findNullKeysRecursive({id:id})
+    if (nullKeys.length!==0){
+      res.status(400).json({message:`${nullKeys} Can't be null`})
+      conn.release()
+      return;
+    }
+    const [data, fields] = await conn.execute(
+      'SLECT * FROM text_table WHERE `user_id` = ? ;'
+      ,[id]
+    )
+    res.json({ message: 'Succesfull',data:data });
+      conn.release()
+    return;
+  } catch (error) {
+    console.error(error)
+    res.status(500).json({ message: 'Internal server error' });
+  } finally{
+    conn.release()
+  }
+});
 
 export const  server =app

@@ -1,5 +1,4 @@
-import {   StyleSheet } from 'react-native';
-import { ThemedView } from '@/components/ThemedView';
+import {   StyleSheet, useColorScheme } from 'react-native';
 import React from 'react';
 import {
   SafeAreaView,
@@ -10,9 +9,10 @@ import {
 } from 'react-native';
 import {  useSession } from '@/hooks/useSession';
 import { Image } from 'expo-image';
-import { Button, Searchbar } from 'react-native-paper';
+import { Button, Searchbar, useTheme } from 'react-native-paper';
 import { Link, router } from 'expo-router';
 import {DATA} from "@/constants/data"
+import { ThemedView } from '@/components/ThemedView';
 
 const Item = ({title,onPress}: ItemProps) => (
   <Button className='mb-4' mode="contained"  onPress={onPress}>{title}</Button>
@@ -21,6 +21,7 @@ const Item = ({title,onPress}: ItemProps) => (
 type ItemProps = {title: string,onPress:(()=>void) | undefined}
 
 export default function HomeScreen() {
+  const colorScheme  = useColorScheme()
   const {session,isLoading}  = useSession()
   const [searchQuery, setSearchQuery] = React.useState('');
   const [data,setData] = React.useState(DATA)
@@ -38,11 +39,12 @@ export default function HomeScreen() {
     )
   }
   const directToEdit = (title:string)=>{
-      router.replace(`/${title}`)
+    console.error(title)
+      router.replace(`/notes/${title}`)
   }
   return (
-      <ThemedView className='h-screen flex flex-col justify-center px-10' >
-        <View style={styles.TopBar}>
+      <ThemedView className={`h-screen flex flex-col justify-center px-10`} >
+        <ThemedView style={styles.TopBar}>
           <Text className='text-white'>Notes</Text>
           <Searchbar 
             placeholder='Search'
@@ -50,7 +52,7 @@ export default function HomeScreen() {
             placeholderTextColor="black"
             value={searchQuery}
             />
-            </View>
+            </ThemedView>
         <SafeAreaView className='flex flex-1'>
           <FlatList
              showsVerticalScrollIndicator={false}
@@ -58,10 +60,10 @@ export default function HomeScreen() {
             renderItem={({ item }) => <Item title={item.title} onPress={()=>directToEdit(item.title)}/>}
             keyExtractor={item => item.id}
           />
-        </SafeAreaView>
       <Link href="/Login" asChild>
         <Button className="mt-4" mode="contained" dark>Login</Button>
       </Link>
+        </SafeAreaView>
       </ThemedView>
   );
 }
@@ -72,5 +74,5 @@ const styles = StyleSheet.create({
   },
   textStyle:{
     color:"black"
-  }
+  },
 });

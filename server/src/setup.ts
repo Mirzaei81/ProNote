@@ -1,4 +1,4 @@
 import {server} from './server';
-import request from 'supertest';
-
-export const appTesting = request(server)
+import  {agent} from 'supertest';
+export const TestServer = server.listen()
+export const appTesting = agent(TestServer)

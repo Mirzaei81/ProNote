@@ -1,10 +1,12 @@
-import { appTesting } from "../setup"
+import { appTesting, TestServer } from "../setup"
 
-describe('Testing /text endpoint', () => {
+describe('Testing /note endpoint', () => {
+  const Token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImV4YW1wbGUiLCJwYXNzSGFzaGVkIjoicGFzc3dvcmQiLCJpZCI6MTQsImlhdCI6MTcxNjQ1MDE2MX0.uY0veQShleTlbbHWxWe1qj2E-YGLhjOK3pADKNaH3XQ'
   test('Should return 400 for missing title', async () => {
     const response = await appTesting
-      .post('/text')
-      .send({ tags: 'test' ,id:1,body:"test1"});
+      .post('/note')
+      .set('Authorization', 'Bearer ' + Token)    
+      .send({ tags: 'test',body:"test1"})
 
     expect(response.status).toBe(400);
     expect(response.body).toHaveProperty('message');
@@ -12,19 +14,48 @@ describe('Testing /text endpoint', () => {
 
   test('Should return 400 for missing tags', async () => {
     const response = await appTesting
-      .post('/text')
-      .send({ title: 'test' ,id:1,body:"tag is Not defeined"});
+      .post('/note')
+      .set('Authorization', 'Bearer ' + Token)    
+      .send({ title: 'test' ,body:"tag is Not defeined"})
 
     expect(response.status).toBe(400);
     expect(response.body).toHaveProperty('message');
   });
 
-  test('Should return 201 for valid title and tags', async () => {
+  test('Should return 201 for valid title and tags but Duplicated', async () => {
     const response = await appTesting
-      .post('/text')
-      .send({ title: 'test', tags: 'test',body:"tesing",id:14 });
+      .post('/note')
+      .set('Authorization', 'Bearer ' + Token)
+      .send({ title: 'test', tags: 'test', body: "tesing", id: 14 })
 
-    expect(response.status).toBe(200);
+    expect(response.status).toBe(400);
     expect(response.body).toHaveProperty('message');
   });
+
+  test('Should return 400 for  duplicated title and tags ', async () => {
+    const response = await appTesting
+      .post('/note')
+      .set('Authorization', 'Bearer ' + Token)    
+      .send({ title: 'test', tags: 'test',body:"tesing" })
+    console.log(response.body)
+    await appTesting
+      .delete('/note/1')
+    expect(response.status).toBe(400);
+    expect(response.body).toHaveProperty('message');
+  });
+  test('Should return 200 for getting all Notes ', async () => {
+    const response = await appTesting
+      .get('/note/')
+      .set('Authorization', 'Bearer ' + Token)    
+    await appTesting
+      .delete('/note/244')
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveProperty('message');
+    expect(response.body.data[0].tags).toBe('test');
+    expect(response.body.data[0].user_id).toBe(14);
+    
+  });
 });
+afterAll(()=>{
+  TestServer.close()
+})
