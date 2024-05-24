@@ -41,18 +41,13 @@ export default function RootLayout() {
   });
   const colorScheme = useColorScheme()
   const theme = colorScheme === "dark" ? DarkTheme: LightTheme
+
   useEffect(() => {
     if (loaded) {
       SplashScreen.hideAsync()
       setisReady(true)
-    console.log(SecureStore.getItem("session"))
     }
   }, [loaded]);
-
-
-  if (!appisReady) {
-    return (<></>)
-  }
 
   return (
     <SessionProvider>
