@@ -2,27 +2,25 @@ import { useSession } from "@/hooks/useSession";
 import {Image} from "expo-image"
 import { useState } from "react";
 import { ThemedView } from '@/components/ThemedView';
-import { Button, Text, TextInput } from "react-native-paper";
+import { Button, Snackbar, Text, TextInput } from "react-native-paper";
 import { StyleSheet } from "react-native";
 import { useAssets } from "expo-asset";
-import { Link } from "expo-router";
 
 export default function Login() {
+  const  [visibale,setVisiable] = useState(false)
   const assets = useAssets([require("../assets/images/logo.png")])
-  const {logIn} = useSession()
+  const {signIn} = useSession()
   const [username,setUserName] = useState("")
   const [password,setPassword] = useState("")
-  const handleLogin =()=>  {
-    try{
-      logIn(username,password)
-    }
-    catch(e){
-        
-    }
-  }
   return (
       <ThemedView className="h-full flex items-center justify-center" >
-        <Image contentFit="cover" style={style.image} className="text-white" source={assets[0]}  alt="proNote"/>
+        <Image contentFit="cover" style={style.image} className="text-white" source={assets[0]}   alt="proNote"/>
+        <TextInput
+          value={username}
+          className="w-4/5 m-2"
+          onChangeText={(username) => setUserName( username )}
+          placeholder={'Username'}
+        />
         <TextInput
           value={username}
           className="w-4/5 m-2"
@@ -36,13 +34,22 @@ export default function Login() {
           placeholder={'Password'}
           secureTextEntry={true}
         />
+        <TextInput
+          value={password}
+          className="w-4/5"
+          onChangeText={(password) => setPassword( password )}
+          placeholder={'Password'}
+          secureTextEntry={true}
+        />
         <Button
           mode="contained-tonal" 
           className="mt-4 text-center flex justify-center"
           contentStyle={style.button}
-          onPress={()=>logIn(username,password)}
+          onPress={()=>signIn(username,password)}
         >Login</Button>
-        <Link href="/SignUp">Don't Have an account?</Link>
+        <Snackbar>
+            {err}
+        </Snackbar>
       </ThemedView>
   );
 }
@@ -52,9 +59,8 @@ const style = StyleSheet.create({
     height: 80
   },
   image:{
-    width : 120,
-    height: 120,
-    borderRadius:20,
+    width : 160,
+    height: 160
   }
 
 })

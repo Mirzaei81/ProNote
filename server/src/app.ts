@@ -1,5 +1,5 @@
 import dotenv from "dotenv"
-import {server} from "./server"
+import {server} from "./server.ts"
 
 const port = process.env.PORT||3000;
 dotenv.config()

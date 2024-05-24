@@ -1,7 +1,11 @@
-import { appTesting, TestServer } from "../setup"
+import { appTesting, TestServer } from "../setup.ts"
 
 describe('Testing /login endpoint', () => {
+  afterAll(async () => {
+    await TestServer.close()
+  })
   test('Should return 401 for invalid email', async () => {
+
     const response = await appTesting
       .post('/login')
       .send({username: 'invalid_email', password: 'test' })
@@ -36,7 +40,4 @@ describe('tesing /register',()=>{
     expect(response.status).toBe(409);
     expect(response.body).toHaveProperty('message');
   });
-})
-afterAll(()=>{
-  TestServer.close()
 })

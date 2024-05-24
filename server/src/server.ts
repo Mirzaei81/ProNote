@@ -1,15 +1,16 @@
-import {getConnection} from "./Utils/index"
+import {getConnection} from "./Utils/index.ts"
 import jwt from "jsonwebtoken"
-import {encryptPass,Matching} from "./encryptPass"
-import {findNullKeysRecursive} from "./checkForNull"
-import { CountResult, LoginResault } from "./types";
+import {encryptPass,Matching} from "./encryptPass.ts"
+import {findNullKeysRecursive} from "./checkForNull.ts"
+import { CountResult, LoginResault } from "./types.ts";
 import cors from "cors"
 import express,{Express} from "express"
 import bodyParser from "body-parser"
-import { authenticateToken } from "./Utils/Verify";
+import { authenticateToken } from "./Utils/Verify.ts";
 
-const myKey = process.env.PRIVATEKEY||"MySecret"
-const app:Express = express();
+const myKey = process.env.PRIVATEKEY||"MySecret";
+const app: Express = express();
+
 app.use(cors())
 app.use(bodyParser.json())
 app.use('/note/',authenticateToken)//securing note route and injecting user context to it 
@@ -18,6 +19,7 @@ app.post('/register', async (req, res) => {
   const conn = await getConnection()
   try {
     const { username, email, password } = req.body;
+    console.log(username,email,password)
     //checking the userName and Emaill Exist for duplicaiton
     const [count] = await conn.execute<CountResult[]>(
       'SELECT COUNT(*) FROM users WHERE username = ? AND email= ?',
@@ -38,7 +40,7 @@ app.post('/register', async (req, res) => {
       conn.release()
       return
     }
-    const passHashed = encryptPass(password)
+    const passHashed = await encryptPass(password)
     //register the user 
     const [data,fields] = await conn.execute(
       'INSERT INTO users (`username`, `email`, `password`) VALUES (?, ?, ?);'
@@ -47,8 +49,9 @@ app.post('/register', async (req, res) => {
 
     conn.release()
     const Token = jwt.sign({username:username,passHashed:passHashed},myKey)
-    res.json({ message: 'User registered', user: data.toString(),Token:Token});
+    res.json({ message: 'User registered',Token:Token});
   } catch (error) {
+    console.error(error)
     res.status(500).json({ message: 'Internal server error' });
   }
 });
@@ -69,13 +72,12 @@ app.post('/login', async (req, res) => {
     const match = await Matching(password,data[0].password)
     if (match){
       const Token = jwt.sign({username:username,passHashed:password,id:data[0].id},myKey)
-      res.status(200).json({ message: 'Logged in', user: data,Token:Token });
+      res.status(200).json({ message: 'Logged in', Token:Token });
     }
     else{
-      res.status(401).json({ message: 'Password is Incorrect', user: data });
+      res.status(401).json({ message: 'Password is Incorrect' });
     }
   } catch (error) {
-    console.log(error)
     res.status(500).json({ message: 'Internal server error',error:error });
   }
   finally{
@@ -98,7 +100,6 @@ app.put('/note/:id', async (req, res) => {
       'UPDATE text_table SET body = ? , title = ? where id =? ;'
       ,[title,body,id]
     )
-    console.log(data)
     res.json({ message: 'Succesfull' });
       conn.release()
     return;
@@ -114,10 +115,10 @@ app.put('/note/:id', async (req, res) => {
 app.delete('/note/:id', async (req, res) => {
   const conn = await getConnection()
   const {id} = req.params
-  const userId = req.user.id;
+  const userId = req.user!.id;
   try {
     const [data, fields] = await conn.execute(
-      'DELETE text_table where id = ? and `user_id` = ? ;'
+      'DELETE from text_table where `id` = ? and `user_id` = ? ;'
       ,[id,userId]
     )
     res.json({ message: 'Succesfull' });
@@ -133,7 +134,7 @@ app.delete('/note/:id', async (req, res) => {
 // Text endpoint 
 app.post('/note/', async (req, res) => {
   const conn = await getConnection()
-  const id = req.user.id;
+  const id = req.user!.id;
   try {
     const {tags,title,body} = req.body;
 
@@ -144,7 +145,22 @@ app.post('/note/', async (req, res) => {
       conn.release()
       return;
     }
-    const [data, fields] = await conn.execute(
+    const [count] = await conn.execute<CountResult[]>(
+      'select COUNT(*) from text_table where  `user_id` = ? and `title` = ?  ;'
+      ,[id,title]
+    )
+    console.log(count[0]["COUNT(*)"])
+    if (count[0]["COUNT(*)"]>0){
+      res.status(409).send(
+      {
+        "status": "error",
+        "code": 409,
+        "message": "This username has Send the same Title.",
+      })
+      conn.release()
+      return
+    }
+    const [data] = await conn.execute(
       'INSERT INTO text_table(`tags`, `title`, `body`,`user_id`) VALUES (?, ?, ?,?);'
       ,[tags,title,body,id]
     )
@@ -171,7 +187,7 @@ app.get('/note/', async (req, res) => {
     }
     const [data, fields] = await conn.execute(
       'SELECT * FROM text_table WHERE `user_id` = ? ;'
-      ,[id.id]
+      ,[id!.id]
     )
     res.json({ message: 'Succesfull',data:data });
       conn.release()

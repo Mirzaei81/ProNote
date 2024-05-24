@@ -1,23 +1,45 @@
 import React from 'react';
 import { useStorageState } from './useStorageState';
-import axios from "axios"
-
-const signIn = async (username:string,password:string)=>{
+import { Login, register } from '@/types';
+const logIn= async (username:string,password:string)=>{
   try{
-    const data = await axios.post('/login',{username: username, password: password })
-    console.log(data)
+    const data = await fetch('/login',{
+      method:'POST',
+      body:JSON.stringify({username: username, password: password }),
+    })
+    let  res:Login=  await data.json()
+    return  res.Token 
   }catch (e){
-
+      console.error(e)
+      return "notFound"
   }
+}
+const signIn = async (username:string,password:string,email:string)=>{
+  try{
+    const data = await fetch('/register',{
+      method:'POST',
+      body:JSON.stringify({username: username, password: password,email:email }),
+    })
+    console.log(data)
+    let  res:register=  await data.json()
+    return  res.Token
+  }catch (e){
+      console.error(e)
+      return "notFound"
+  }
+}
+const signOut  = ()=>{
 
 }
 const AuthContext = React.createContext<{
-  signIn: (username:string,password:string) => void;
+  logIn: (username:string,password:string) => Promise<void>|null;
+  signIn: (username:string,password:string,email:string) =>Promise<void>|null;
   signOut: () => void;
   session?: string | null;
   isLoading: boolean;
 }>({
-  signIn: signIn,
+  logIn:()=>null,
+  signIn:()=>null,
   signOut: () => null,
   session: null,
   isLoading: false,
@@ -41,12 +63,16 @@ export function SessionProvider(props: React.PropsWithChildren) {
   return (
     <AuthContext.Provider
       value={{
-        signIn: () => {
+        signIn:async(username,password,email) => {
           // Perform sign-in logic here
-          setSession('xxx');
+          setSession(await signIn(username,password,email));
         },
         signOut: () => {
           setSession(null);
+        },
+        logIn:async (username:string,password:string)=>{
+          const token = await logIn(username,password)
+          setSession(token)
         },
         session,
         isLoading,

@@ -1,27 +1,27 @@
 {
-    "exclude": "node_modules/",
-    "jsc": {
-      "parser": {
-        "syntax": "typescript",
-        "topLevelAwait": true
-      },
-      "target": "esnext",
-      "baseUrl": ".",
-      "experimental": {
-        "plugins": [
-          [
-            "@swc/plugin-transform-imports",
-            {
-              "^(.*?)(\\.ts)$": {
-                "skipDefaultConversion": true,
-                "transform": "{{matches.[1]}}.js"
-              }
-            }
-          ]
-        ]
-      }
+  "$schema": "https://json.schemastore.org/swcrc",
+  "sourceMaps":true,
+  "module": {
+    "type": "es6",
+    "strictMode": true,
+    "noInterop": false,
+    "resolveFully": true
+  },
+  "jsc": {
+    "externalHelpers": false,
+    "target": "es2020",
+    "parser": {
+      "syntax": "typescript",
+      "tsx": false,
+      "decorators": false,
+      "dynamicImport": false
     },
-    "module": {
-      "type": "nodenext"
-    }
+    "transform": {
+      "legacyDecorator": true,
+      "decoratorMetadata": true
+    },
+    "keepClassNames": true,
+    "baseUrl": "./"
+    
   }
+}

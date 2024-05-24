@@ -4,7 +4,7 @@ import {  useEffect, useState } from 'react';
 import 'react-native-reanimated';
 import { SessionProvider } from '@/hooks/useSession';
 import { DefaultTheme,PaperProvider } from 'react-native-paper';
-import { Slot } from 'expo-router';
+import { Slot, Stack } from 'expo-router';
 import { useColorScheme } from 'react-native';
 import { Colors } from '@/constants/Colors';
 
@@ -54,7 +54,10 @@ export default function RootLayout() {
   return (
     <SessionProvider>
       <PaperProvider theme={theme}>
-        <Slot/>
+        <Stack screenOptions={{headerTitle:"",navigationBarColor:"black"}}>
+          <Stack.Screen name='index'/>
+          <Stack.Screen name='notes/[id]'/>
+        </Stack>
       </PaperProvider>
     </SessionProvider>
   );
