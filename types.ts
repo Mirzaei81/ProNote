@@ -14,3 +14,14 @@ export interface  register{
   user:Object,
   Token:string
 }
+export interface note{
+  id: Number,
+  body: string,
+  tags: string,
+  title:string,
+  user_id:Number
+}
+export interface noteData{
+  data:note[],
+  message:string
+}

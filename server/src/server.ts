@@ -19,7 +19,6 @@ app.post('/register', async (req, res) => {
   const conn = await getConnection()
   try {
     const { username, email, password } = req.body;
-    console.log(username,email,password)
     //checking the userName and Emaill Exist for duplicaiton
     const [count] = await conn.execute<CountResult[]>(
       'SELECT COUNT(*) FROM users WHERE username = ? AND email= ?',
@@ -61,12 +60,10 @@ app.post('/login', async (req, res) => {
   const conn = await getConnection()
   try {
     const {username, password } = req.body;
-    console.log(username)
     const [data, fields] = await conn.query<LoginResault[]>(
       'select * from `users` where `username` = ? limit 1'
       ,[username]
     )
-    console.log(data)
     if (data.length === 0) {
       conn.release()
       return res.status(401).json({ message: 'User Does not exist' });
@@ -151,7 +148,6 @@ app.post('/note/', async (req, res) => {
       'select COUNT(*) from text_table where  `user_id` = ? and `title` = ?  ;'
       ,[id,title]
     )
-    console.log(count[0]["COUNT(*)"])
     if (count[0]["COUNT(*)"]>0){
       res.status(409).send(
       {
@@ -202,10 +198,11 @@ app.get('/note/', async (req, res) => {
   }
 });
 
-app.get('/note/', async (req, res) => {
+app.get('/note/:id', async (req, res) => {
   const conn = await getConnection()
+  const {id} = req.params
+  const Userid = req.user;
   try {
-    const id = req.user;
     console.log(id)
     const nullKeys:string[] =findNullKeysRecursive({id:id})
     if (nullKeys.length!==0){
@@ -213,9 +210,10 @@ app.get('/note/', async (req, res) => {
       conn.release()
       return;
     }
+    console.log(Userid,id)
     const [data, fields] = await conn.execute(
-      'SLECT * FROM text_table WHERE `user_id` = ? ;'
-      ,[id]
+      'SELECT * FROM text_table WHERE `user_id` = ? and `title` = ? ;'
+      ,[Userid,id]
     )
     res.json({ message: 'Succesfull',data:data });
       conn.release()
