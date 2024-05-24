@@ -1,12 +1,12 @@
-import {getConnection} from "./Utils/index.ts"
+import {getConnection} from "./Utils/index.js"
 import jwt from "jsonwebtoken"
-import {encryptPass,Matching} from "./encryptPass.ts"
-import {findNullKeysRecursive} from "./checkForNull.ts"
-import { CountResult, LoginResault } from "./types.ts";
+import {encryptPass,Matching} from "./encryptPass.js"
+import {findNullKeysRecursive} from "./checkForNull.js"
+import { CountResult, LoginResault } from "./types.js";
 import cors from "cors"
 import express,{Express} from "express"
 import bodyParser from "body-parser"
-import { authenticateToken } from "./Utils/Verify.ts";
+import { authenticateToken } from "./Utils/Verify.js";
 
 const myKey = process.env.PRIVATEKEY||"MySecret";
 const app: Express = express();
@@ -61,10 +61,12 @@ app.post('/login', async (req, res) => {
   const conn = await getConnection()
   try {
     const {username, password } = req.body;
+    console.log(username)
     const [data, fields] = await conn.query<LoginResault[]>(
       'select * from `users` where `username` = ? limit 1'
       ,[username]
     )
+    console.log(data)
     if (data.length === 0) {
       conn.release()
       return res.status(401).json({ message: 'User Does not exist' });

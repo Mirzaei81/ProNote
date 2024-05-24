@@ -1,8 +1,9 @@
-import { appTesting, TestServer } from "../setup.ts"
+import { appTesting, TestServer } from "../setup.js"
 
 describe('Testing /note endpoint', () => {
   const Token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImV4YW1wbGUiLCJwYXNzSGFzaGVkIjoicGFzc3dvcmQiLCJpZCI6MTQsImlhdCI6MTcxNjQ1MDE2MX0.uY0veQShleTlbbHWxWe1qj2E-YGLhjOK3pADKNaH3XQ'
   afterAll(async()=>{
+    TestServer.unref()
     await TestServer.close
   })
   test('Should return 400 for missing title', async () => {

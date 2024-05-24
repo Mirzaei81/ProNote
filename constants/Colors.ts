@@ -56,7 +56,10 @@ export const Colors = {
     surfaceContainerLow: "#FFF1E9",
     surfaceContainer: "#FBEBE1",
     surfaceContainerHigh: "#F5E5DC",
-    surfaceContainerHighest: "#F0DFD6"
+    surfaceContainerHighest: "#F0DFD6",
+    bone:"#966237",
+    hightlight:"#533014"
+
   },
   dark: {
     primary: "#FFB782",
@@ -79,7 +82,7 @@ export const Colors = {
     background: "#19120D",
     onBackground: "#F0DFD6",
     surface: "#19120D",
-    onSurface: "#F0DFD6",
+    onSurface: "#FFFFFF",
     surfaceVariant: "#52443B",
     onSurfaceVariant: "#D6C3B7",
     outline: "#9F8D83",
@@ -107,6 +110,12 @@ export const Colors = {
     surfaceContainerLow: "#221A14",
     surfaceContainer: "#261E18",
     surfaceContainerHigh: "#312822",
-    surfaceContainerHighest: "#3C332D"
+    surfaceContainerHighest: "#3C332D",
+    bone:"#b3805b",
+    hightlight:"#19120d"
   },
 }
+
+export const lightLinear=  ["#966237", "#85552e", "#744825", "#633c1c", "#533014"]
+export const darkLinear = ['#b38058', '#896245', '#614532', '#3b2b20', '#19120d']
+export const location = [.4,.7,.8,.9,1]

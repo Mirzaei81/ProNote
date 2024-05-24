@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "target": "es2020",
-    "module": "es2020",
+    "module": "ES2020",
     "allowJs": true,
     "removeComments": true,
     "resolveJsonModule": true,
@@ -15,7 +15,7 @@
     "esModuleInterop": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "moduleResolution": "Node",
+    "moduleResolution": "Bundler",
     "skipLibCheck": true,
     "noEmit": true,
     "allowImportingTsExtensions": true

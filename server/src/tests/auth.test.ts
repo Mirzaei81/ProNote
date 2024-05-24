@@ -1,7 +1,8 @@
-import { appTesting, TestServer } from "../setup.ts"
+import { appTesting, TestServer } from "../setup.js"
 
 describe('Testing /login endpoint', () => {
   afterAll(async () => {
+    TestServer.unref()
     await TestServer.close()
   })
   test('Should return 401 for invalid email', async () => {

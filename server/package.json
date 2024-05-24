@@ -7,9 +7,9 @@
     "dev": "concurrently \"npm run watch-compile\" \"npm run watch-dev\"",
     "watch-compile": "swc src -w --out-dir dist",
     "watch-dev": "nodemon --watch \"dist/**/*\" -e js ./dist/src/app.js",
-    "build": "swc src -d dist --ignore ./src/tests/**/*",
+    "build": "swc src -d dist --ignore",
     "start": "cross-env NODE_ENV=production node dist/src/app.js",
-    "test": "node --experimental-vm-modules  ./node_modules/jest/bin/jest.js --detectOpenHandles"
+    "test": "cross-env NODE_ENV=test node --experimental-vm-modules  ./node_modules/jest/bin/jest.js"
   },
   "license": "ISC",
   "dependencies": {

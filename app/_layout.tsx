@@ -4,9 +4,12 @@ import {  useEffect, useState } from 'react';
 import 'react-native-reanimated';
 import { SessionProvider } from '@/hooks/useSession';
 import { DefaultTheme,PaperProvider } from 'react-native-paper';
-import { Slot, Stack } from 'expo-router';
+import { Slot } from 'expo-router';
 import { useColorScheme } from 'react-native';
 import { Colors } from '@/constants/Colors';
+import * as SecureStore from 'expo-secure-store';
+import 'react-native-reanimated'
+import 'react-native-gesture-handler'
 
 const LightTheme = {
   ...DefaultTheme,
@@ -38,11 +41,11 @@ export default function RootLayout() {
   });
   const colorScheme = useColorScheme()
   const theme = colorScheme === "dark" ? DarkTheme: LightTheme
-  console.log(colorScheme)
   useEffect(() => {
     if (loaded) {
       SplashScreen.hideAsync()
       setisReady(true)
+    console.log(SecureStore.getItem("session"))
     }
   }, [loaded]);
 
@@ -54,10 +57,7 @@ export default function RootLayout() {
   return (
     <SessionProvider>
       <PaperProvider theme={theme}>
-        <Stack screenOptions={{headerTitle:"",navigationBarColor:"black"}}>
-          <Stack.Screen name='index'/>
-          <Stack.Screen name='notes/[id]'/>
-        </Stack>
+        <Slot/>
       </PaperProvider>
     </SessionProvider>
   );

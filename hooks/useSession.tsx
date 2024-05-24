@@ -1,39 +1,49 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useStorageState } from './useStorageState';
 import { Login, register } from '@/types';
-const logIn= async (username:string,password:string)=>{
+
+const address = process.env.EXPO_PUBLIC_LOCALADDRESS
+const port= process.env.EXPO_PUBLIC_PORT 
+const uri = `http://${address}:${port}`
+const logIn= async (username:string,password:string):Promise<{message?:string,error?:string}>=>{
   try{
-    const data = await fetch('/login',{
+    const data = await fetch(uri+'/login',{
       method:'POST',
-      body:JSON.stringify({username: username, password: password }),
+      headers: {
+        'Content-Type': 'application/json' // Set the Content-Type header
+      },
+      body: JSON.stringify({ username: username, password: password }),
     })
     let  res:Login=  await data.json()
-    return  res.Token 
+    if(data.status===401){
+      return {"error":"Password Is incorrect"}
+    }
+    return  {"message":res.Token}
   }catch (e){
       console.error(e)
-      return "notFound"
+      return {"error":"An Unknown error Happend"}
   }
 }
-const signIn = async (username:string,password:string,email:string)=>{
+const signIn = async (username:string,password:string,email:string):Promise<{message?:string,error?:string}>=>{
   try{
-    const data = await fetch('/register',{
+    const data = await fetch(uri+'/register',{
       method:'POST',
       body:JSON.stringify({username: username, password: password,email:email }),
     })
-    console.log(data)
     let  res:register=  await data.json()
-    return  res.Token
+    console.log(res)
+    if(data.status===401){
+      return {"error":"Password Is incorrect"}
+    }
+    return  {"message":res.Token}
   }catch (e){
-      console.error(e)
-      return "notFound"
+      return {"error":"An Unknown error Happend" }
   }
 }
-const signOut  = ()=>{
 
-}
 const AuthContext = React.createContext<{
-  logIn: (username:string,password:string) => Promise<void>|null;
-  signIn: (username:string,password:string,email:string) =>Promise<void>|null;
+  logIn: (username:string,password:string) => Promise<{message?:string,error?:string}>|null;
+  signIn: (username:string,password:string,email:string) =>Promise<{message?:string,error?:string}>|null;
   signOut: () => void;
   session?: string | null;
   isLoading: boolean;
@@ -53,29 +63,37 @@ export function useSession() {
       throw new Error('useSession must be wrapped in a <SessionProvider />');
     }
   }
-
   return value;
 }
 
 export function SessionProvider(props: React.PropsWithChildren) {
   const [[isLoading, session], setSession] = useStorageState('session');
-
+  console.log(session +"useSession:71")
   return (
     <AuthContext.Provider
       value={{
         signIn:async(username,password,email) => {
           // Perform sign-in logic here
-          setSession(await signIn(username,password,email));
+          const token = await signIn(username,password,email)
+          if (token.hasOwnProperty("error")){
+            return token
+          }
+          setSession(token.message!);
+          return {"message":"successfull"}
         },
         signOut: () => {
           setSession(null);
         },
         logIn:async (username:string,password:string)=>{
           const token = await logIn(username,password)
-          setSession(token)
+          if (token.hasOwnProperty("error")){
+            return token
+          }
+          setSession(token.message!)
+          return {"message":"successfull"}
         },
-        session,
-        isLoading,
+        session:session,
+        isLoading:isLoading,
       }}>
       {props.children}
     </AuthContext.Provider>
