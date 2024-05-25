@@ -46,7 +46,7 @@ export function ThemeEditor() {
   };
 
   return (
-    <Flex gap={20} style={{ paddingTop: 20 }}>
+    <Flex style={{ paddingTop: 20 }}>
       {isDynamicThemeSupported && (
         <Flex direction="row" justify="space-between">
           <Text>Use default theme</Text>
@@ -54,9 +54,9 @@ export function ThemeEditor() {
         </Flex>
       )}
 
-      <Flex gap={20}>
+      <Flex >
         <Text>Select source color</Text>
-        <Flex gap={20} direction="row" justify="center">
+        <Flex  direction="row" justify="center">
           {colors.map(({ light, dark }) => {
             const color = colorScheme === 'dark' ? dark : light;
             return (

@@ -13,7 +13,7 @@ import {
   QueryClient,
   QueryClientProvider
 } from '@tanstack/react-query'
-import { AccessibilityProvider, Material3ThemeProvider, useAccessibility } from '@/hooks/materialThemeProvider';
+import {  Material3ThemeProvider } from '@/hooks/materialThemeProvider';
 import { useMMKVString } from 'react-native-mmkv';
 
 export const LightTheme = {
@@ -50,7 +50,6 @@ export default function RootLayout() {
   });
   const colorScheme = useColorScheme()
   const theme = colorScheme === "dark" ? DarkTheme: LightTheme
-  const accessblity = useAccessibility()
 
   useEffect(() => {
     if (loaded) {
