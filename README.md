@@ -8,12 +8,15 @@
    ```bash
    npm install
    ```
+2. Config the app
+   ```bash
+   .\install.ps1
+   ```
+   Check for local setting eg.((port,address)=>client,(peivateKey(JWTKEY),salt)=>server)
 
-2. Start the app
+3. Start the app
 
    ```bash
     npx expo start
    ```
-
-In the output, you'll find options to open the app in a
 

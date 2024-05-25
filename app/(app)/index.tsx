@@ -8,15 +8,17 @@ import {
 } from 'react-native';
 import {  useSession } from '@/hooks/useSession';
 import { Image } from 'expo-image';
-import {  Button, FAB, Searchbar, Text } from 'react-native-paper';
-import {  router } from 'expo-router';
+import {  Button, Dialog, FAB, Menu, Portal, Searchbar, Text } from 'react-native-paper';
+import { useRouter } from 'expo-router';
 import { ThemedView } from '@/components/ThemedView';
 import ShimmerPlaceHolder from 'react-native-shimmer-placeholder'
 import { LinearGradient } from 'expo-linear-gradient';
 import { Colors, darkLinear, lightLinear, location } from '@/constants/Colors';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { getNotes } from '@/utils/api';
 import { note, noteData } from '@/types';
+import { useAssets } from 'expo-asset';
+import { ThemeEditor } from '@/components/ThemeEditor';
 
 const ItemColors = ['#543C24','#E6C7BE','#C96A53','#9C8C74']
 const Item = ({ title, idx, onPress }: ItemProps) => {
@@ -35,23 +37,34 @@ const Item = ({ title, idx, onPress }: ItemProps) => {
 
 type ItemProps = {idx:number,title: string,onPress:(()=>void) | undefined}
 export default function HomeScreen() {
+  const assets = useAssets([require("@/assets/images/Create.svg")])
+  const router = useRouter()
   const colorScheme  = useColorScheme()
   const ShimmerGrad = colorScheme =="dark"?darkLinear:lightLinear
   const {session,isLoading:LoadingSession}  = useSession()
   const [searchQuery, setSearchQuery] = React.useState('');
   const [data,setData] = React.useState<note[]>([])
   const [filtredData,setFilterdData] = React.useState<note[]>(data)
+  const [state, setState] = React.useState({ open: false });
+  const [DialogVisible,setDialogVisible] =  useState(false)
+
+  const onStateChange = ({ open }:{open:boolean}) => setState({ open });
+
+  const { open } = state;
+
   const {data:Notes,isLoading} = useQuery<noteData>({
     queryKey:[session!],
     queryFn:()=>getNotes(session!),
 })
-  
+
+
   useEffect(()=>{
     if(Notes){
       setData(Notes!.data)
       setFilterdData(Notes!.data)
     }
   },[Notes])
+
 
   const onChangeSearch = (query:string) =>{
     setSearchQuery(query)
@@ -69,9 +82,10 @@ export default function HomeScreen() {
     )
   }
   const directToEdit = (title:string)=>{
-      router.push(`/${title}`)
+    router.setParams({ name: 'Updated' });
+    router.push({pathname:`/${title}`,params:{name:"updated"}})
   }
-  if ((isLoading && !LoadingSession) || data.length==0){
+  if ((isLoading && !LoadingSession) || data && data.length==0){
     return(
       <ThemedView className="h-full  flex flex-col justify-center px-10" >
           <Searchbar 
@@ -98,18 +112,41 @@ export default function HomeScreen() {
             />
             </ThemedView>
         <SafeAreaView className='flex flex-1'>
+      {/*@ts-expect-error */}
+          {filtredData.length===0?<Image contentFit="cover" source={assets[0]} alt='Create First'/>:
           <FlatList
              showsVerticalScrollIndicator={false}
             data={filtredData}
             renderItem={({ item,index }) => <Item idx={index} title={item.title} onPress={()=>directToEdit(item.title)}/>}
             keyExtractor={item => item.id.toString()}
-          />
+          />}
         </SafeAreaView>
-      <FAB
-        icon="plus"
-        style={styles.fab}
-        onPress={() => console.log('Pressed')}
-      />
+        <Portal>
+        <Dialog visible={DialogVisible} onDismiss={()=>setDialogVisible(false)}>
+          <Dialog.Title>Change theme</Dialog.Title>
+          <Dialog.Content>
+            <ThemeEditor />
+          </Dialog.Content>
+        </Dialog>
+        <FAB.Group
+          open={open}
+          visible
+          icon={open ? 'cog' : 'plus'}
+          actions={[
+            {
+              icon: 'palette',
+              label: 'palette',
+              onPress: () => {setDialogVisible(true)},
+            },
+            {
+              icon: 'note-plus',
+              label: 'Create Note',
+              onPress: () => router.push("/edit"),
+            },
+          ]}
+          onStateChange={onStateChange}
+        />
+      </Portal>
       </ThemedView>
   );
 }

@@ -5,7 +5,7 @@ import 'react-native-reanimated';
 import { SessionProvider } from '@/hooks/useSession';
 import { DefaultTheme,PaperProvider } from 'react-native-paper';
 import { Slot } from 'expo-router';
-import { useColorScheme } from 'react-native';
+import { AccessibilityInfo, useColorScheme } from 'react-native';
 import { Colors } from '@/constants/Colors';
 import 'react-native-reanimated'
 import 'react-native-gesture-handler'
@@ -13,8 +13,10 @@ import {
   QueryClient,
   QueryClientProvider
 } from '@tanstack/react-query'
+import { AccessibilityProvider, Material3ThemeProvider, useAccessibility } from '@/hooks/materialThemeProvider';
+import { useMMKVString } from 'react-native-mmkv';
 
-const LightTheme = {
+export const LightTheme = {
   ...DefaultTheme,
   roundness: 2,
   myOwnProperty: true,
@@ -24,7 +26,7 @@ const LightTheme = {
         },
 };
 //defaultTheme for React Native Paper
-const DarkTheme = {
+export const DarkTheme = {
   ...DefaultTheme,
   roundness: 2,
   myOwnProperty: true,
@@ -41,11 +43,14 @@ SplashScreen.preventAutoHideAsync();
 export default function RootLayout() {
 
   const [appisReady,setisReady] =useState(false)
+  const [sourceColor] = useMMKVString('sourceColor');
+
   const [loaded] = useFonts({
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
   });
   const colorScheme = useColorScheme()
   const theme = colorScheme === "dark" ? DarkTheme: LightTheme
+  const accessblity = useAccessibility()
 
   useEffect(() => {
     if (loaded) {
@@ -56,11 +61,11 @@ export default function RootLayout() {
 
   return (
     <SessionProvider>
-      <QueryClientProvider client={client}>
-        <PaperProvider theme={theme}>
-          <Slot />
-        </PaperProvider>
-      </QueryClientProvider>
+        <QueryClientProvider client={client}>
+          <Material3ThemeProvider sourceColor={sourceColor}>
+            <Slot />
+          </Material3ThemeProvider>
+        </QueryClientProvider>
     </SessionProvider>
   );
 }

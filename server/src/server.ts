@@ -210,10 +210,9 @@ app.get('/note/:id', async (req, res) => {
       conn.release()
       return;
     }
-    console.log(Userid,id)
     const [data, fields] = await conn.execute(
       'SELECT * FROM text_table WHERE `user_id` = ? and `title` = ? ;'
-      ,[Userid,id]
+      ,[Userid!.id,id]
     )
     res.json({ message: 'Succesfull',data:data });
       conn.release()

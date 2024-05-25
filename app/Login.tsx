@@ -28,7 +28,7 @@ export default function Login() {
   return (
       <ThemedView className="h-full flex items-center justify-center" >
       {/*@ts-expect-error */}
-        <Image contentFit="cover" style={style.image} className="text-white" source={assets[0]}  alt="proNote"/>
+        <Image contentFit="cover" style={style.image} source={assets[0]}  alt="proNote"/>
         <TextInput
           value={username}
           className="w-4/5 m-2"

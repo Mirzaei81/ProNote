@@ -31,7 +31,6 @@ const signIn = async (username:string,password:string,email:string):Promise<{mes
       body:JSON.stringify({username: username, password: password,email:email }),
     })
     let  res:register=  await data.json()
-    console.log(res)
     if(data.status===401){
       return {"error":"Password Is incorrect"}
     }
