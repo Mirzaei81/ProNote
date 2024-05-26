@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { CodeBridge, RichText, TenTapStartKit, Toolbar, useEditorBridge } from "@10play/tentap-editor"
 import { KeyboardAvoidingView, Platform, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLocalSearchParams } from 'expo-router';
 import { Button, Dialog, Portal, TextInput, useTheme } from 'react-native-paper';
 import { AntDesign } from '@expo/vector-icons';
@@ -9,8 +8,11 @@ import { useSession } from '@/hooks/useSession';
 import { useQuery } from '@tanstack/react-query';
 import { getNotesByTitle } from '@/utils/api';
 import { noteData } from '@/types';
+import { ThemedView } from '@/components/ThemedView';
 
-export const RichTextComponents = () => {
+import { useHeaderHeight } from '@react-navigation/elements';
+export const Page= () => {
+    const insets = useHeaderHeight();
     const param = useLocalSearchParams();
     const theme = useTheme()
     const id = param.id

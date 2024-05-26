@@ -20,11 +20,12 @@ import { note, noteData } from '@/types';
 import { useAssets } from 'expo-asset';
 import { ThemeEditor } from '@/components/ThemeEditor';
 import { rotation} from "simpler-color"
-import { useMaterial3Theme } from '@pchmn/expo-material3-theme';
 import { Item } from '@/components/item';
 import { useThemeColor } from '@/hooks/useThemeColor';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function HomeScreen() {
+  const inset = useSafeAreaInsets()
   const mainThem = useTheme()
 
   const colorError = useThemeColor({}, 'error');
@@ -93,9 +94,6 @@ export default function HomeScreen() {
       </View>
     )
   }
-  useEffect(()=>{
-    console.log((!filtredData || filtredData.length===0).toString())
-  },[filtredData])
   const directToEdit = (title:string)=>{
     router.setParams({ name: 'Updated' });
     router.push({pathname:`/${title}`,params:{name:"updated"}})
@@ -106,7 +104,7 @@ export default function HomeScreen() {
           <Searchbar 
             placeholder='Search'
             className='my-2'
-            placeholderTextColor={surfaceColor}
+            placeholderTextColor="black"
             value={searchQuery}
             />
       {[0,1,2,3,4,5,6,7].map((_,idx)=>(
@@ -116,23 +114,23 @@ export default function HomeScreen() {
     )
   }
   return (
-      <ThemedView className="h-full flex flex-col justify-center px-10" >
+      <ThemedView style={styles.TopBar} className="h-full flex flex-col justify-center px-10" >
           <Searchbar 
             placeholder='Search'
             className='my-2'
             onChangeText={onChangeSearch}
-            placeholderTextColor={surfaceColor}
+            placeholderTextColor="black"
             value={searchQuery}
             />
         <SafeAreaView className='flex flex-1'>
-          {(!filtredData || filtredData.length===0)?(
-          <View className='flex text-center align-center mt-40  justify-center'>
-            {/*@ts-expect-error */}
-            <Image contentFit="cover" style={styles.image} source={assets[0]} alt='Create First' />
-            <Link href="/create" style={{ color: surfaceColor, textAlign: "center" }}>Create New Note + </Link>
-          </View>) :
+          {(!filtredData || filtredData.length===0)?(<View className='flex text-center align-center mt-40  justify-center'>
+          {/*@ts-expect-error */}
+          <Image contentFit="cover" style={styles.image} source={assets[0]} alt='Create First' />
+            <Link href="/create" style={{color:surfaceColor,textAlign:"center"}}>Create New Note + </Link>
+            </View>):
           <FlatList
             contentContainerStyle={{gap:10}}
+            className='mb-20'
             showsVerticalScrollIndicator={false}
             data={filtredData}
             renderItem={({ item,index }) => <Item colorScheme={[...ItemsColorSCheme]} idx={index} title={item.title} onPress={()=>directToEdit(item.title)}/>}

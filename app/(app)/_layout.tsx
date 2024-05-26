@@ -30,9 +30,9 @@ export default function RootLayout() {
         <Stack.Screen name='index' options={{headerShown:false}}/>
         <Stack.Screen name='create'  options={{headerTransparent:true,headerStyle:{backgroundColor:sourceColor!}} }/>
         <Stack.Screen name='about'
-         options={{headerTransparent:true,headerStyle:{backgroundColor:sourceColor!}} }
+         options={{headerTransparent:false,headerStyle:{backgroundColor:sourceColor!}} }
     />
-      <Stack.Screen name='[id]' options={{headerTransparent:true,headerStyle:{backgroundColor:sourceColor!}} }
+      <Stack.Screen name='[id]' options={{headerStyle:{backgroundColor:sourceColor!}} }
 />
       </Stack>
   )
