@@ -1,44 +1,36 @@
 import { useState } from 'react';
 import { CodeBridge, RichText, TenTapStartKit, Toolbar, useEditorBridge } from "@10play/tentap-editor"
 import { KeyboardAvoidingView, Platform, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLocalSearchParams } from 'expo-router';
 import { Button, Dialog, Portal, TextInput, useTheme } from 'react-native-paper';
 import { AntDesign } from '@expo/vector-icons';
+import { postNote } from '@/utils/api';
 import { useSession } from '@/hooks/useSession';
-import { useQuery } from '@tanstack/react-query';
-import { getNotesByTitle } from '@/utils/api';
-import { noteData } from '@/types';
-
-export const RichTextComponents = () => {
-    const param = useLocalSearchParams();
+import { ThemedView } from '@/components/ThemedView';
+export default function Create(){
     const theme = useTheme()
+    const {session} = useSession()
+    const param = useLocalSearchParams();
     const id = param.id
     const [title, setTitle] = useState<string>('');
     const [show,setShow] = useState(false)
-    const {session}  =useSession();
-    const { data: Notes, isLoading } = useQuery<noteData>({
-        queryKey: [id],
-        queryFn: () => (typeof id==="string" ? getNotesByTitle(session!,id):{data:[],message:""}),
-        enabled:(session!==undefined)
-    })
     const customCodeBlockCSS = `
         code {
             background-color: ${theme.colors.background};
             border-radius: 0.25em;
             border-color: #e45d5d;
-            border-width: 1px;
+            border-width: 6px;
             border-style: solid;
             box-decoration-break: clone;
             color: ${theme.colors.onBackground};
             font-size: 0.9rem;
-            padding: 0.25em;
+            padding: 0.5em;
         }
         `;
     const editor = useEditorBridge({
         autofocus: true,
         avoidIosKeyboard: true,
-        initialContent: Notes?Notes.message:"",
+        initialContent: 'Start editing!',
         bridgeExtensions: [
             ...TenTapStartKit,
             CodeBridge.configureCSS(customCodeBlockCSS), // Custom codeblock css
@@ -54,9 +46,13 @@ export const RichTextComponents = () => {
         }
         
     });
+    const Create = async ()=>{
+        const body = await editor.getText()
+       postNote(session!,title,body) 
+    }
 
     return (
-        <ThemedView style={{flex:1}}>
+        <ThemedView >
             <View>
                 <AntDesign name="save" size={24} color="black"  onPress={()=>setShow(true)} />
             </View>
@@ -64,14 +60,13 @@ export const RichTextComponents = () => {
         <Dialog visible={show} onDismiss={()=>setShow(false)}>
           <Dialog.Title>Save Changes</Dialog.Title>
           <Dialog.Content>
-           <Button>Close</Button> 
-           <Button>Save</Button> 
+           <Button onPress={()=>setShow(false)} style={{backgroundColor:theme.colors.error}}>Close</Button> 
+           <Button onPress={()=>{Create(),setShow(false)}} style={{backgroundColor:theme.colors.primary}}>Save</Button> 
           </Dialog.Content>
         </Dialog>
       </Portal>
-      {/*@ts-ignore*/}
-            <TextInput mode='flat' value={title} onChange={(e) => { setTitle(e.target.value) }} />
-            <RichText editor={editor} />
+            <TextInput className=" p-4" mode='flat' value={title} onChangeText={(e) => { setTitle(e) }} />
+            <RichText  editor={editor} />
             <KeyboardAvoidingView
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                 style={{

@@ -6,10 +6,12 @@ import { getNotesByTitle } from "@/utils/api";
 import { useQuery } from "@tanstack/react-query";
 import { LinearGradient } from "expo-linear-gradient";
 import { useLocalSearchParams, useNavigation } from "expo-router";
-import { useEffect } from "react";
 import { StatusBar, StyleSheet, useColorScheme } from "react-native";
 import { Text } from "react-native-paper";
+import { SafeAreaView } from "react-native-safe-area-context";
 import ShimmerPlaceholder from "react-native-shimmer-placeholder";
+import Constants from 'expo-constants'
+import { useLayoutEffect } from "react";
 
 export default function Page(){
     const param = useLocalSearchParams();
@@ -22,7 +24,12 @@ export default function Page(){
     })
   const colorScheme  = useColorScheme()
   const ShimmerGrad = colorScheme =="dark"?darkLinear:lightLinear
-
+  const navigation = useNavigation()
+  useLayoutEffect(()=>{
+    navigation.setOptions({
+      title: 'Home', // Set the title here
+    });
+  }, [navigation]);
     if(isLoading){
         return (
             <ThemedView className="h-full">
@@ -33,15 +40,17 @@ export default function Page(){
         )
     }
     return(
+      <SafeAreaView>
         <ThemedView style={styles.TopBar} className="h-full p-2">
-            <Text className="text-white  text-2xl">{id}</Text>
-            <Text>{Notes && Notes?.data[0].body}</Text>
+          <Text className="text-white  text-2xl">{id}</Text>
+          <Text>{Notes && Notes?.data[0].body}</Text>
         </ThemedView>
+      </SafeAreaView>
     )
 }
 const styles = StyleSheet.create({
   TopBar: {
-    marginTop:StatusBar.currentHeight||0
+    marginTop:Constants.statusBarHeight||0
   },
   shimmer:{
     marginTop:10,

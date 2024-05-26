@@ -14,7 +14,7 @@ import {
   QueryClientProvider
 } from '@tanstack/react-query'
 import {  Material3ThemeProvider } from '@/hooks/materialThemeProvider';
-import { useMMKVString } from 'react-native-mmkv';
+import { useStorageState } from '@/hooks/useStorageState';
 
 export const LightTheme = {
   ...DefaultTheme,
@@ -43,7 +43,7 @@ SplashScreen.preventAutoHideAsync();
 export default function RootLayout() {
 
   const [appisReady,setisReady] =useState(false)
-  const [sourceColor] = useMMKVString('sourceColor');
+  const [[loading,sourceColor]] = useStorageState('sourceColor');
 
   const [loaded] = useFonts({
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
@@ -61,7 +61,7 @@ export default function RootLayout() {
   return (
     <SessionProvider>
         <QueryClientProvider client={client}>
-          <Material3ThemeProvider sourceColor={sourceColor}>
+          <Material3ThemeProvider sourceColor={sourceColor!}>
             <Slot />
           </Material3ThemeProvider>
         </QueryClientProvider>

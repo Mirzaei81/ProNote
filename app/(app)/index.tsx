@@ -8,46 +8,45 @@ import {
 } from 'react-native';
 import {  useSession } from '@/hooks/useSession';
 import { Image } from 'expo-image';
-import {  Button, Dialog, FAB, Menu, Portal, Searchbar, Text } from 'react-native-paper';
-import { useRouter } from 'expo-router';
+import {   Dialog, FAB, Portal, Searchbar, Snackbar, Text,useTheme } from 'react-native-paper';
+import { Link, useRouter } from 'expo-router';
 import { ThemedView } from '@/components/ThemedView';
 import ShimmerPlaceHolder from 'react-native-shimmer-placeholder'
 import { LinearGradient } from 'expo-linear-gradient';
-import { Colors, darkLinear, lightLinear, location } from '@/constants/Colors';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import {  darkLinear, lightLinear, location } from '@/constants/Colors';
+import { useQuery } from '@tanstack/react-query';
 import { getNotes } from '@/utils/api';
 import { note, noteData } from '@/types';
 import { useAssets } from 'expo-asset';
 import { ThemeEditor } from '@/components/ThemeEditor';
+import { rotation} from "simpler-color"
+import { useMaterial3Theme } from '@pchmn/expo-material3-theme';
+import { Item } from '@/components/item';
+import { useThemeColor } from '@/hooks/useThemeColor';
 
-const ItemColors = ['#543C24','#E6C7BE','#C96A53','#9C8C74']
-const Item = ({ title, idx, onPress }: ItemProps) => {
-  const [color,setColor] = useState(Colors.light.background)
-  useEffect(() => {
-    setColor(ItemColors[idx%(ItemColors.length+1)])
-  }, [])
-  return (
-    <Button key={idx} buttonColor={color} className="mb-4" contentStyle={styles.item} mode="contained" onPress={onPress}> 
-      <Text className='text-center'>
-        {title}
-      </Text>
-    </Button>
-  )
-};
-
-type ItemProps = {idx:number,title: string,onPress:(()=>void) | undefined}
 export default function HomeScreen() {
-  const assets = useAssets([require("@/assets/images/Create.svg")])
-  const router = useRouter()
+  const mainThem = useTheme()
+
+  const colorError = useThemeColor({}, 'error');
+  const  surfaceColor = useThemeColor({}, "onBackground");
+
   const colorScheme  = useColorScheme()
   const ShimmerGrad = colorScheme =="dark"?darkLinear:lightLinear
+
+  const assets = useAssets([require("@/assets/images/Create.svg")])
+  const router = useRouter()
+
   const {session,isLoading:LoadingSession}  = useSession()
+
   const [searchQuery, setSearchQuery] = React.useState('');
   const [data,setData] = React.useState<note[]>([])
-  const [filtredData,setFilterdData] = React.useState<note[]>(data)
+  const [filtredData,setFilterdData] = React.useState<note[]>([])
   const [state, setState] = React.useState({ open: false });
   const [DialogVisible,setDialogVisible] =  useState(false)
+  const [ItemsColorSCheme,setColorScheme] = useState<string[]>([])
 
+  const [error,setError] = useState("")  //Error Handling
+  const [visible,setVisible] = useState(false)
   const onStateChange = ({ open }:{open:boolean}) => setState({ open });
 
   const { open } = state;
@@ -55,13 +54,27 @@ export default function HomeScreen() {
   const {data:Notes,isLoading} = useQuery<noteData>({
     queryKey:[session!],
     queryFn:()=>getNotes(session!),
+    retry:3
 })
 
+  useEffect(()=>{
+    let LocalColorScheme = []
+    for(let i=0;i<6;i++){
+      LocalColorScheme.push(rotation(mainThem.colors.primary,i*50))
+    }
+    setColorScheme([...LocalColorScheme])
+  },[mainThem])
 
   useEffect(()=>{
     if(Notes){
+      if(Object.hasOwn(Notes,"error")){
+          setError(Notes.error.toString())
+          setVisible(true)
+      }
+      else{
       setData(Notes!.data)
       setFilterdData(Notes!.data)
+      }
     }
   },[Notes])
 
@@ -75,23 +88,25 @@ export default function HomeScreen() {
   } 
   if (LoadingSession && !isLoading){
     return(
-      <View className='bg-[#523E27]'>
+      <View className='h-full flex items-center content-center bg-[rgb(82,62,39)]'>
         <Image source="@/assets/images/logo.png" alt='proNote'/>
-        <Text>Hello</Text>
       </View>
     )
   }
+  useEffect(()=>{
+    console.log((!filtredData || filtredData.length===0).toString())
+  },[filtredData])
   const directToEdit = (title:string)=>{
     router.setParams({ name: 'Updated' });
     router.push({pathname:`/${title}`,params:{name:"updated"}})
   }
-  if ((isLoading && !LoadingSession) || data && data.length==0){
+  if ((isLoading && !LoadingSession)){
     return(
       <ThemedView className="h-full  flex flex-col justify-center px-10" >
           <Searchbar 
             placeholder='Search'
             className='my-2'
-            placeholderTextColor="black"
+            placeholderTextColor={surfaceColor}
             value={searchQuery}
             />
       {[0,1,2,3,4,5,6,7].map((_,idx)=>(
@@ -102,22 +117,25 @@ export default function HomeScreen() {
   }
   return (
       <ThemedView className="h-full flex flex-col justify-center px-10" >
-        <ThemedView style={styles.TopBar}>
           <Searchbar 
             placeholder='Search'
             className='my-2'
             onChangeText={onChangeSearch}
-            placeholderTextColor="black"
+            placeholderTextColor={surfaceColor}
             value={searchQuery}
             />
-            </ThemedView>
         <SafeAreaView className='flex flex-1'>
-      {/*@ts-expect-error */}
-          {filtredData.length===0?<Image contentFit="cover" source={assets[0]} alt='Create First'/>:
+          {(!filtredData || filtredData.length===0)?(
+          <View className='flex text-center align-center mt-40  justify-center'>
+            {/*@ts-expect-error */}
+            <Image contentFit="cover" style={styles.image} source={assets[0]} alt='Create First' />
+            <Link href="/create" style={{ color: surfaceColor, textAlign: "center" }}>Create New Note + </Link>
+          </View>) :
           <FlatList
-             showsVerticalScrollIndicator={false}
+            contentContainerStyle={{gap:10}}
+            showsVerticalScrollIndicator={false}
             data={filtredData}
-            renderItem={({ item,index }) => <Item idx={index} title={item.title} onPress={()=>directToEdit(item.title)}/>}
+            renderItem={({ item,index }) => <Item colorScheme={[...ItemsColorSCheme]} idx={index} title={item.title} onPress={()=>directToEdit(item.title)}/>}
             keyExtractor={item => item.id.toString()}
           />}
         </SafeAreaView>
@@ -141,11 +159,21 @@ export default function HomeScreen() {
             {
               icon: 'note-plus',
               label: 'Create Note',
-              onPress: () => router.push("/edit"),
+              onPress: () => router.push("/create"),
             },
+            {
+              icon:'information-outline',
+              label:"About Us ",
+              onPress:()=>router.replace("/about")
+            }
           ]}
           onStateChange={onStateChange}
         />
+      <Snackbar style={{backgroundColor:colorError}}  duration={5000} onDismiss={() => setVisible(false)} visible={visible}>
+        {
+          error
+        }
+      </Snackbar>
       </Portal>
       </ThemedView>
   );
@@ -164,16 +192,10 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
   },
-  item:{
-    width : '100%',
-    height: 80,
-    flex:1,
-    textAlign:"center",
-    display:"flex",
-    justifyContent:"center",
-    alignContent:"center",
-    alignItems:"center"
-
+  image:{
+    width : 320,
+    height: 320,
+    borderRadius:20,
   },
   shimmer:{
     marginTop:10,

@@ -2,7 +2,7 @@ import { useSession } from "@/hooks/useSession";
 import {Image} from "expo-image"
 import { useState } from "react";
 import { ThemedView } from '@/components/ThemedView';
-import { Button, Snackbar, Text, TextInput } from "react-native-paper";
+import { Button, HelperText, Snackbar, Text, TextInput } from "react-native-paper";
 import { StyleSheet } from "react-native";
 import { useAssets } from "expo-asset";
 import { Link, router } from "expo-router";
@@ -29,6 +29,15 @@ export default function Login() {
       }
       router.replace("/")
   }
+  const passCheck=()=>{
+    if(Checkpassword.length===0){
+      return false
+    }
+    return  !(password=== Checkpassword)
+  }
+  const hasErrors = ()=>{
+    return (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email) && email.length!==0)
+  }
   return (
       <ThemedView className="h-full flex items-center justify-center" >
       {/*@ts-expect-error */}
@@ -43,10 +52,14 @@ export default function Login() {
         <TextInput
           value={email}
           className="w-4/5 m-2"
-          onChangeText={(username) => setUserName( username )}
+          onChangeText={(username) => setEmail( username )}
           label={'Email'}
           right={<TextInput.Icon icon="email" />}
         />
+      <HelperText type="error" style={{color:"red"}} visible={hasErrors()}>
+        Email address is invalid!
+      </HelperText>
+
         <TextInput
           value={password}
           className="w-4/5"
@@ -56,13 +69,16 @@ export default function Login() {
           right={<TextInput.Icon icon="key" />}
         />
         <TextInput
-          value={password}
+          value={Checkpassword}
           className="w-4/5"
-          onChangeText={(password) => setPassword( password )}
+          onChangeText={(password) => setCheckPassword(password)}
           label={'Password Confirmation'}
           secureTextEntry={true}
           right={<TextInput.Icon icon="key" />}
         />
+      <HelperText type="error" visible={passCheck()}>
+      password and Confirmation don't match 
+      </HelperText>
         <Button
           mode="contained-tonal" 
           className="mt-4 text-center flex justify-center"

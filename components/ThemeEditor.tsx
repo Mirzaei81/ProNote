@@ -1,10 +1,10 @@
 import { isDynamicThemeSupported } from '@pchmn/expo-material3-theme';
 import { useColorScheme } from 'react-native';
-import { useMMKVBoolean, useMMKVString } from 'react-native-mmkv';
 import { IconButton, Switch, Text, TouchableRipple } from 'react-native-paper';
 
 import { useMaterial3ThemeContext } from '@/hooks/materialThemeProvider';
 import { Flex } from './Flex';
+import { useStorageState } from '@/hooks/useStorageState';
 
 const colors = [
   {
@@ -29,15 +29,14 @@ export function ThemeEditor() {
   const colorScheme = useColorScheme();
   const { updateTheme, resetTheme } = useMaterial3ThemeContext();
 
-  const [useDefaultTheme, setUseDefaultTheme] = useMMKVBoolean('useDefaultTheme');
-  const [sourceColor, setSourceColor] = useMMKVString('sourceColor');
+  const [[loadingTheme,useDefaultTheme], setUseDefaultTheme] =useStorageState('useDefaultTheme');
+  const [[LoadingSourceColor,sourceColor], setSourceColor] = useStorageState('sourceColor');
 
   const handleUseDefaultThemeChange = (value: boolean) => {
     if (value) {
       resetTheme();
-      setSourceColor(undefined);
     }
-    setUseDefaultTheme(value);
+    setUseDefaultTheme(value.toString());
   };
 
   const handleSourceColorChange = (color: string) => {
@@ -50,7 +49,7 @@ export function ThemeEditor() {
       {isDynamicThemeSupported && (
         <Flex direction="row" justify="space-between">
           <Text>Use default theme</Text>
-          <Switch value={useDefaultTheme !== false} onValueChange={handleUseDefaultThemeChange} />
+          <Switch value={JSON.parse(useDefaultTheme!) !== false} onValueChange={handleUseDefaultThemeChange} />
         </Flex>
       )}
 
@@ -61,11 +60,11 @@ export function ThemeEditor() {
             const color = colorScheme === 'dark' ? dark : light;
             return (
               <TouchableRipple
-                style={{ height: 50, width: 50, borderRadius: 50 }}
+                style={{ margin:10, height: 50, width: 50, borderRadius: 50 }}
                 onPress={() => handleSourceColorChange(color)}
                 borderless
                 rippleColor="rgba(0, 0, 0, .32)"
-                disabled={useDefaultTheme}
+                disabled={JSON.parse(useDefaultTheme!)}
                 key={color}
               >
                 <Flex

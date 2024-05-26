@@ -203,7 +203,6 @@ app.get('/note/:id', async (req, res) => {
   const {id} = req.params
   const Userid = req.user;
   try {
-    console.log(id)
     const nullKeys:string[] =findNullKeysRecursive({id:id})
     if (nullKeys.length!==0){
       res.status(400).json({message:`${nullKeys} Can't be null`})

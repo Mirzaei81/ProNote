@@ -2,6 +2,7 @@ const address = process.env.EXPO_PUBLIC_LOCALADDRESS
 const port= process.env.EXPO_PUBLIC_PORT 
 const uri = `http://${address}:${port}`
 export const getNotes=  async (Token:string)=>{
+  console.log(uri)
   // get allendpoint
   try{
   const res = await fetch(uri+'/note/', {
@@ -12,6 +13,7 @@ export const getNotes=  async (Token:string)=>{
     },
   })
     const data =res.json()
+    console.log(data)
     return data
 }
     catch(error:any){
@@ -69,7 +71,7 @@ export const deleteNote = async (id:string,Token:string) => {
       console.error('Error:', error);
     });
 } 
-export const  postNote = async (id:string,Token:string,tags:string,title:string,body:string) => {
+export const  postNote = async (Token:string,title:string,body:string) => {
   fetch(uri+'/note/', {
     method: 'POST',
     headers: {
@@ -77,10 +79,9 @@ export const  postNote = async (id:string,Token:string,tags:string,title:string,
         'Authorization': `Bearer ${Token}`,
     },
     body: JSON.stringify({
-      tags: tags,
+      tags:"",
       title: title,
       body: body,
-      userId: id,
     }),
   })
     .then((response) => response.json())
