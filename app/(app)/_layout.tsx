@@ -2,12 +2,12 @@ import { ThemedView } from "@/components/ThemedView";
 import { useSession } from "@/hooks/useSession";
 import { Redirect,Stack } from "expo-router";
 import { ActivityIndicator, } from "react-native-paper";
-import { useEffect } from "react";
-import { useMaterial3ThemeContext } from "@/hooks/materialThemeProvider";
+import { useContext, useEffect } from "react";
+import { FontSizeProviderContext, useMaterial3ThemeContext } from "@/hooks/materialThemeProvider";
 import { useStorageState } from "@/hooks/useStorageState";
-import { Page } from "../edit/[id]";
 
 export default function RootLayout() {
+  const fontCtx = useContext(FontSizeProviderContext);
   const { updateTheme } = useMaterial3ThemeContext();
   const [[LoadingSourceColor,sourceColor]] = useStorageState('sourceColor');
   useEffect(()=>{
@@ -27,14 +27,12 @@ export default function RootLayout() {
     return <Redirect href="/Login"/>
   }
   return (
-      <Stack screenOptions={{}}>
+      <Stack screenOptions={{headerTitleStyle:{fontSize:fontCtx.fontSize},headerStyle:{backgroundColor:sourceColor!} }}>
         <Stack.Screen name='index' options={{headerShown:false}}/>
-        <Stack.Screen name='create'  options={{headerTransparent:false,headerStyle:{backgroundColor:sourceColor!}} }/>
-        <Stack.Screen name='about'
-         options={{headerTransparent:false,headerStyle:{backgroundColor:sourceColor!}} }
-    />
-      <Stack.Screen name='[id]' options={{headerStyle:{backgroundColor:sourceColor!},title:"Title"} }/>
-      <Stack.Screen name='edit/[id]' options={{headerStyle:{backgroundColor:sourceColor!},title:"Title"} }/>
+        <Stack.Screen name='create'  options={{headerTransparent:false}} />
+        <Stack.Screen name='about' options={{headerTransparent:false} } />
+      <Stack.Screen name='[id]'/>
+      <Stack.Screen name='edit/[id]'/>
       </Stack>
   )
 }

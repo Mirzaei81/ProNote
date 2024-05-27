@@ -2,11 +2,13 @@ import { useSession } from "@/hooks/useSession";
 import {Image} from "expo-image"
 import { useState } from "react";
 import { ThemedView } from '@/components/ThemedView';
-import { Button, HelperText, Snackbar, Text, TextInput } from "react-native-paper";
+import { Button, HelperText, Snackbar, TextInput } from "react-native-paper";
+import { customText } from "react-native-paper";
 import { StyleSheet } from "react-native";
 import { useAssets } from "expo-asset";
 import { Link, router } from "expo-router";
 import { useThemeColor } from "@/hooks/useThemeColor";
+import CustomText from "@/components/Text";
 
 export default function Login() {
 
@@ -15,6 +17,7 @@ export default function Login() {
 
   const assets = useAssets([require("../assets/images/logo.png")])
   const colorError =useThemeColor({},"error")
+  const onError =useThemeColor({},"onError")
 
   const {signIn} = useSession()
 
@@ -46,6 +49,7 @@ export default function Login() {
         <Image contentFit="cover" style={style.image} className="text-white" source={assets[0]}   alt="proNote"/>
         <TextInput
           value={username}
+          style={{fontSize:}}
           className="w-4/5 m-2"
           onChangeText={(username) => setUserName( username )}
           label={'Username'}
@@ -59,7 +63,9 @@ export default function Login() {
           right={<TextInput.Icon icon="email" />}
         />
       <HelperText type="error" style={{color:"red"}} visible={hasErrors()}>
-        Email address is invalid!
+        <CustomText style={{ color: colorError }}>
+          Email address is invalid!
+        </CustomText>
       </HelperText>
 
         <TextInput
@@ -79,19 +85,22 @@ export default function Login() {
           right={<TextInput.Icon icon="key" />}
         />
       <HelperText type="error" visible={passCheck()}>
+        <CustomText style={{color:colorError}}>
       password and Confirmation don't match 
+      </CustomText>
       </HelperText>
         <Button
           mode="contained-tonal" 
           className="mt-4 text-center flex justify-center"
           contentStyle={style.button}
           onPress={handleSignIn}
-        >SignUp</Button>
-        <Link  href="/Login" asChild><Text>Already have an account ?</Text></Link>
+        ><CustomText>SignUp</CustomText></Button>
+        <Link  href="/Login" asChild><CustomText>Already have an account ?</CustomText></Link>
       <Snackbar style={{backgroundColor:colorError}}  duration={5000} onDismiss={() => setVisible(false)} visible={visible}>
-        {
-          error
-        }
+        <CustomText style={{color:onError}}>
+          {error}
+          </CustomText>
+          
       </Snackbar>
       </ThemedView>
   );
