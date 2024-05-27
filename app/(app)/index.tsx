@@ -9,7 +9,7 @@ import {
 import {  useSession } from '@/hooks/useSession';
 import { Image } from 'expo-image';
 import {   Dialog, FAB, Portal, Searchbar, Snackbar, Text,useTheme } from 'react-native-paper';
-import { Link, useRouter } from 'expo-router';
+import { Link, useNavigation, useRouter } from 'expo-router';
 import { ThemedView } from '@/components/ThemedView';
 import ShimmerPlaceHolder from 'react-native-shimmer-placeholder'
 import { LinearGradient } from 'expo-linear-gradient';
@@ -50,6 +50,7 @@ export default function HomeScreen() {
   const [visible,setVisible] = useState(false)
   const onStateChange = ({ open }:{open:boolean}) => setState({ open });
 
+  const nav = useNavigation()
   const { open } = state;
 
   const {data:Notes,isLoading} = useQuery<noteData>({
@@ -58,87 +59,88 @@ export default function HomeScreen() {
     retry:3
 })
 
-  useEffect(()=>{
+  useEffect(() => {
     let LocalColorScheme = []
-    for(let i=0;i<6;i++){
-      LocalColorScheme.push(rotation(mainThem.colors.primary,i*50))
+    for (let i = 0; i < 6; i++) {
+      LocalColorScheme.push(rotation(mainThem.colors.primary, i * 50))
     }
     setColorScheme([...LocalColorScheme])
-  },[mainThem])
+  }, [mainThem])
 
-  useEffect(()=>{
-    if(Notes){
-      if(Object.hasOwn(Notes,"error")){
-          setError(Notes.error.toString())
-          setVisible(true)
+  useEffect(() => {
+    if (Notes) {
+      if (Object.hasOwn(Notes, "error")) {
+        //@ts-expect-error
+        setError(Notes.error.toString())
+        setVisible(true)
       }
-      else{
-      setData(Notes!.data)
-      setFilterdData(Notes!.data)
+      else {
+        setData(Notes!.data)
+        setFilterdData(Notes!.data)
       }
     }
-  },[Notes])
+  }, [Notes])
 
-
-  const onChangeSearch = (query:string) =>{
+  const onChangeSearch = (query: string) => {
     setSearchQuery(query)
-    if(data){
+
+    if (data) {
       const filtredData = data.filter((val) => val.title.toLocaleLowerCase().includes(query.toLowerCase()))
       setFilterdData(filtredData)
     }
-  } 
-  if (LoadingSession && !isLoading){
-    return(
+  }
+  if (LoadingSession && !isLoading ) {
+    return (
       <View className='h-full flex items-center content-center bg-[rgb(82,62,39)]'>
-        <Image source="@/assets/images/logo.png" alt='proNote'/>
+        <Image source="@/assets/images/logo.png" alt='proNote' />
       </View>
     )
   }
-  const directToEdit = (title:string)=>{
+  const directToEdit = (title: string) => {
     router.setParams({ name: 'Updated' });
-    router.push({pathname:`/${title}`,params:{name:"updated"}})
+    router.push({ pathname: `/${title}`, params: { name: "updated" } })
   }
-  if ((isLoading && !LoadingSession)){
-    return(
+  if ((isLoading && !LoadingSession)) {
+    return (
       <ThemedView className="h-full  flex flex-col justify-center px-10" >
-          <Searchbar 
-            placeholder='Search'
-            className='my-2'
-            placeholderTextColor="black"
-            value={searchQuery}
-            />
-      {[0,1,2,3,4,5,6,7].map((_,idx)=>(
-        <ShimmerPlaceHolder key={idx}shimmerStyle={styles.shimmer} shimmerColors={ShimmerGrad} location={location} visible={false} LinearGradient={LinearGradient}/>
-      ))}
+        <Searchbar
+          placeholder='Search'
+          className='my-2'
+          placeholderTextColor={surfaceColor}
+          value={searchQuery}
+        />
+        {[0, 1, 2, 3, 4, 5, 6, 7].map((_, idx) => (
+          <ShimmerPlaceHolder key={idx} shimmerStyle={styles.shimmer} shimmerColors={ShimmerGrad} location={location} visible={false} LinearGradient={LinearGradient} />
+        ))}
       </ThemedView>
     )
   }
   return (
-      <ThemedView style={styles.TopBar} className="h-full flex flex-col justify-center px-10" >
-          <Searchbar 
-            placeholder='Search'
-            className='my-2'
-            onChangeText={onChangeSearch}
-            placeholderTextColor="black"
-            value={searchQuery}
-            />
-        <SafeAreaView className='flex flex-1'>
-          {(!filtredData || filtredData.length===0)?(<View className='flex text-center align-center mt-40  justify-center'>
+    <ThemedView style={styles.TopBar} className="h-full flex flex-col justify-center px-10" >
+      <Searchbar
+        placeholder='Search'
+        className='my-2'
+        onChangeText={onChangeSearch}
+        placeholderTextColor={surfaceColor}
+        value={searchQuery}
+      />
+      <SafeAreaView className='flex flex-1'>
+        {(!filtredData || filtredData.length === 0) ? (<View className='flex text-center align-center mt-40  justify-center'>
           {/*@ts-expect-error */}
           <Image contentFit="cover" style={styles.image} source={assets[0]} alt='Create First' />
-            <Link href="/create" style={{color:surfaceColor,textAlign:"center"}}>Create New Note + </Link>
-            </View>):
+          <Link href="/create" style={{ color: surfaceColor, textAlign: "center" }}>Create New Note + </Link>
+        </View>) :
           <FlatList
-            contentContainerStyle={{gap:10}}
+            contentContainerStyle={{ gap: 10 }}
             className='mb-20'
             showsVerticalScrollIndicator={false}
             data={filtredData}
-            renderItem={({ item,index }) => <Item colorScheme={[...ItemsColorSCheme]} idx={index} title={item.title} onPress={()=>directToEdit(item.title)}/>}
+            renderItem={({ item, index }) => <Item colorScheme={[...ItemsColorSCheme]} idx={index} title={item.title} onPress={() => directToEdit(item.title)} />}
             keyExtractor={item => item.id.toString()}
           />}
-        </SafeAreaView>
-        <Portal>
-        <Dialog visible={DialogVisible} onDismiss={()=>setDialogVisible(false)}>
+      </SafeAreaView>
+      <Portal>
+        <Dialog visible={DialogVisible} onDismiss={() => setDialogVisible(false)}>
           <Dialog.Title>Change theme</Dialog.Title>
           <Dialog.Content>
             <ThemeEditor />
@@ -152,7 +154,7 @@ export default function HomeScreen() {
             {
               icon: 'palette',
               label: 'palette',
-              onPress: () => {setDialogVisible(true)},
+              onPress: () => { setDialogVisible(true) },
             },
             {
               icon: 'note-plus',
@@ -160,20 +162,20 @@ export default function HomeScreen() {
               onPress: () => router.push("/create"),
             },
             {
-              icon:'information-outline',
-              label:"About Us ",
-              onPress:()=>router.replace("/about")
+              icon: 'information-outline',
+              label: "About Us ",
+              onPress: () => router.replace("/about")
             }
           ]}
           onStateChange={onStateChange}
         />
-      <Snackbar style={{backgroundColor:colorError}}  duration={5000} onDismiss={() => setVisible(false)} visible={visible}>
-        {
-          error
-        }
-      </Snackbar>
+        <Snackbar style={{ backgroundColor: colorError }} duration={5000} onDismiss={() => setVisible(false)} visible={visible}>
+          {
+            error
+          }
+        </Snackbar>
       </Portal>
-      </ThemedView>
+    </ThemedView>
   );
 }
 
@@ -181,8 +183,8 @@ const styles = StyleSheet.create({
   TopBar: {
     marginTop: StatusBar.currentHeight || 0,
   },
-  textStyle:{
-    color:"black"
+  textStyle: {
+    color: "black"
   },
   fab: {
     position: 'absolute',
@@ -190,15 +192,15 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
   },
-  image:{
-    width : 320,
+  image: {
+    width: 320,
     height: 320,
-    borderRadius:20,
+    borderRadius: 20,
   },
-  shimmer:{
-    marginTop:10,
-    width:"100%",
-    height:80,
-    borderRadius:6
+  shimmer: {
+    marginTop: 10,
+    width: "100%",
+    height: 80,
+    borderRadius: 6
   }
 });

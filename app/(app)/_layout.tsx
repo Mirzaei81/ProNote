@@ -26,13 +26,13 @@ export default function RootLayout() {
     return <Redirect href="/Login"/>
   }
   return (
-      <Stack screenOptions={{headerTitle:"",navigationBarColor:"black"}}>
+      <Stack screenOptions={{}}>
         <Stack.Screen name='index' options={{headerShown:false}}/>
-        <Stack.Screen name='create'  options={{headerTransparent:true,headerStyle:{backgroundColor:sourceColor!}} }/>
+        <Stack.Screen name='create'  options={{headerTransparent:false,headerStyle:{backgroundColor:sourceColor!}} }/>
         <Stack.Screen name='about'
          options={{headerTransparent:false,headerStyle:{backgroundColor:sourceColor!}} }
     />
-      <Stack.Screen name='[id]' options={{headerStyle:{backgroundColor:sourceColor!}} }
+      <Stack.Screen name='[id]' options={{headerStyle:{backgroundColor:sourceColor!},title:"Title"} }
 />
       </Stack>
   )

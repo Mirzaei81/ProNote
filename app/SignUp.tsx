@@ -6,6 +6,7 @@ import { Button, HelperText, Snackbar, Text, TextInput } from "react-native-pape
 import { StyleSheet } from "react-native";
 import { useAssets } from "expo-asset";
 import { Link, router } from "expo-router";
+import { useThemeColor } from "@/hooks/useThemeColor";
 
 export default function Login() {
 
@@ -13,6 +14,7 @@ export default function Login() {
   const [error,setError] = useState("")  //SnackBar
 
   const assets = useAssets([require("../assets/images/logo.png")])
+  const colorError =useThemeColor({},"error")
 
   const {signIn} = useSession()
 
@@ -86,8 +88,8 @@ export default function Login() {
           onPress={handleSignIn}
         >SignUp</Button>
         <Link  href="/Login" asChild><Text>Already have an account ?</Text></Link>
-      <Snackbar duration={5000} onDismiss={() => setVisible(false)} visible={visible}>
-        {error!=="" &&
+      <Snackbar style={{backgroundColor:colorError}}  duration={5000} onDismiss={() => setVisible(false)} visible={visible}>
+        {
           error
         }
       </Snackbar>

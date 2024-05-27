@@ -1,18 +1,18 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { CodeBridge, RichText, TenTapStartKit, Toolbar, useEditorBridge } from "@10play/tentap-editor"
 import { KeyboardAvoidingView, Platform, View } from 'react-native';
-import { useLocalSearchParams } from 'expo-router';
-import { Button, Dialog, Portal, TextInput, useTheme } from 'react-native-paper';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import { Button, Dialog, Portal, Snackbar, TextInput, useTheme } from 'react-native-paper';
 import { AntDesign } from '@expo/vector-icons';
 import { useSession } from '@/hooks/useSession';
 import { useQuery } from '@tanstack/react-query';
-import { getNotesByTitle } from '@/utils/api';
+import { getNotesByTitle, updateNote } from '@/utils/api';
 import { noteData } from '@/types';
 import { ThemedView } from '@/components/ThemedView';
+import ValidationComponent from '@/components/ValidationComponent';
 
-import { useHeaderHeight } from '@react-navigation/elements';
 export const Page= () => {
-    const insets = useHeaderHeight();
+    const [loading,setLoading] = useState(false)
     const param = useLocalSearchParams();
     const theme = useTheme()
     const id = param.id
@@ -24,6 +24,11 @@ export const Page= () => {
         queryFn: () => (typeof id==="string" ? getNotesByTitle(session!,id):{data:[],message:""}),
         enabled:(session!==undefined)
     })
+
+    const [SnackBarVisible, setSnackBarVisible] = useState(false)
+    const [error, setError] = useState("")
+    const router = useRouter()
+
     const customCodeBlockCSS = `
         code {
             background-color: ${theme.colors.background};
@@ -56,20 +61,32 @@ export const Page= () => {
         }
         
     });
-
+    useEffect(()=>{
+        console.log(Notes)
+    },[Notes])
+    const handleUpdate = async ()=>{
+        setLoading(true)
+        const body = await editor.getText()
+        if (body.length !== 0 || title.length !== 0) {
+            setError("Body or Title shouldn't be Empty ")
+            setSnackBarVisible(true)
+        }
+        else {
+            updateNote(title, body,session!).then(() => router.replace("/")).catch((e) => {
+                setError("An Error occourd while trying to connect ot server"),
+                setSnackBarVisible(true)
+            })
+            setShow(false)
+            setLoading(false)
+        }
+    }
     return (
         <ThemedView style={{flex:1}}>
             <View>
                 <AntDesign name="save" size={24} color="black"  onPress={()=>setShow(true)} />
             </View>
         <Portal>
-        <Dialog visible={show} onDismiss={()=>setShow(false)}>
-          <Dialog.Title>Save Changes</Dialog.Title>
-          <Dialog.Content>
-           <Button>Close</Button> 
-           <Button>Save</Button> 
-          </Dialog.Content>
-        </Dialog>
+            <ValidationComponent setShow={setShow} loading={loading} handler={handleUpdate} show={show} />
       </Portal>
       {/*@ts-ignore*/}
             <TextInput mode='flat' value={title} onChange={(e) => { setTitle(e.target.value) }} />
@@ -84,6 +101,9 @@ export const Page= () => {
             >
                 <Toolbar editor={editor} />
             </KeyboardAvoidingView>
+            <Snackbar style={{ backgroundColor: theme.colors.error }} duration={5000} onDismiss={() => setSnackBarVisible(false)} visible={SnackBarVisible}>
+                {error}
+            </Snackbar>
         </ThemedView>
     );
 };

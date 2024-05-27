@@ -2,7 +2,6 @@ const address = process.env.EXPO_PUBLIC_LOCALADDRESS
 const port= process.env.EXPO_PUBLIC_PORT 
 const uri = `http://${address}:${port}`
 export const getNotes=  async (Token:string)=>{
-  console.log(uri)
   // get allendpoint
   try{
   const res = await fetch(uri+'/note/', {
@@ -13,7 +12,6 @@ export const getNotes=  async (Token:string)=>{
     },
   })
     const data =res.json()
-    console.log(data)
     return data
 }
     catch(error:any){
@@ -31,16 +29,15 @@ export const getNotesByTitle=  async (Token:string,title:string)=>{
     },
   })
     const data =res.json()
-    console.log(data)
     return data
 }
     catch(error:any){
         return {"error":error}
     };
 }
-export const updateNote = async (id:string, title:string, body:string,Token:string) => {
+export const updateNote = async (title:string, body:string,Token:string) => {
     try {
-      const response = await fetch(uri+`/note/${id}`, {
+      const response = await fetch(uri+`/note/${title}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -49,26 +46,25 @@ export const updateNote = async (id:string, title:string, body:string,Token:stri
         body: JSON.stringify({ title, body }),
       });
       const data = await response.json();
-      console.log(data); // Handle the response data as needed
+      return {message: 'Succesfull'}
     } catch (error) {
-      console.error('Error updating note:', error);
+    return {'error': error};
     }
   };
 export const deleteNote = async (id:string,Token:string) => {
   //delete
-  fetch(uri+`/notes/${id}`, {
+  const data = await fetch(uri+`/note/${id}`, {
     method: 'DELETE',
     headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${Token}`,
     },
   })
-    .then((response) => response.json())
-    .then((data) => {
-      console.log('Success:', data);
-    })
+  console.log(data.status)
+  console.log((await data.text())+"api:63")
+  return await data.json()
     .catch((error) => {
-      console.error('Error:', error);
+    return {'error': error};
     });
 } 
 export const  postNote = async (Token:string,title:string,body:string) => {
@@ -78,6 +74,7 @@ export const  postNote = async (Token:string,title:string,body:string) => {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${Token}`,
     },
+
     body: JSON.stringify({
       tags:"",
       title: title,
@@ -86,9 +83,9 @@ export const  postNote = async (Token:string,title:string,body:string) => {
   })
     .then((response) => response.json())
     .then((data) => {
-      console.log('Success:', data);
+      return {message: 'Succesfull'}
     })
     .catch((error) => {
-      console.error('Error:', error);
+      return {'Error': error};
     });
 } 

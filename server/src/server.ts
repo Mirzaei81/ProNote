@@ -117,7 +117,7 @@ app.delete('/note/:id', async (req, res) => {
   const userId = req.user!.id;
   try {
     const [data, fields] = await conn.execute(
-      'DELETE from text_table where `id` = ? and `user_id` = ? ;'
+      'DELETE from text_table where `title` = ? and `user_id` = ? ;'
       ,[id,userId]
     )
     res.json({ message: 'Succesfull' });
