@@ -61,6 +61,9 @@ export const Page= () => {
         }
         
     });
+    useEffect(()=>{
+        console.log("helloWorld")
+    })
     const handleUpdate = async ()=>{
         setLoading(true)
         const body = await editor.getText()

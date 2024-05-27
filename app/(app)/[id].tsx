@@ -37,7 +37,6 @@ export default function Page(){
       headerRight: () => (
         <View className="flex flex-row space-x-3">
           <FontAwesome5 name="trash" size={24} color={theme.colors.onPrimary} onPress={() => setShow(true)} />
-          <FontAwesome5 name="edit" size={24} color={theme.colors.onPrimary} onPress={() => router.push(`edit1`)} />
         </View>
     )
     });
