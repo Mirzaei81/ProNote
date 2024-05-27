@@ -6,7 +6,6 @@ const address = process.env.EXPO_PUBLIC_LOCALADDRESS
 const port= process.env.EXPO_PUBLIC_PORT 
 const uri = `http://${address}:${port}`
 const logIn= async (username:string,password:string):Promise<{message?:string,error?:string}>=>{
-  console.log(uri)
   try{
     const data = await fetch(uri+'/login',{
       method:'POST',

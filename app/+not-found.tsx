@@ -7,6 +7,7 @@ import { Text } from 'react-native-paper';
 
 export default function NotFoundScreen() {
   const assets = useAssets([require("@/assets/images/Create.svg")])
+  
   return (
     <>
       <Stack.Screen options={{ title: 'Oops!' }} />

@@ -28,7 +28,7 @@ export const getNotesByTitle=  async (Token:string,title:string)=>{
       'Authorization': `Bearer ${Token}`,
     },
   })
-    const data =res.json()
+    const data = res.json()
     return data
 }
     catch(error:any){
@@ -60,8 +60,6 @@ export const deleteNote = async (id:string,Token:string) => {
         'Authorization': `Bearer ${Token}`,
     },
   })
-  console.log(data.status)
-  console.log((await data.text())+"api:63")
   return await data.json()
     .catch((error) => {
     return {'error': error};

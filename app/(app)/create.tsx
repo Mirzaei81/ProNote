@@ -66,7 +66,7 @@ export default function CreateSCreen({ navigation, route }:any){
             setSnackBarVisible(true)
         }
         else {
-            postNote(session!, title, body).then(() => router.replace("/")).catch((e) => {
+            postNote(session!, title.trim(), body).then(() => router.replace("/")).catch((e) => {
                 setError("An Error occourd while trying to connect ot server"),
                 setSnackBarVisible(true)
             })
@@ -82,7 +82,6 @@ export default function CreateSCreen({ navigation, route }:any){
     },[nav])
     
     const titleChange = useCallback((e:string)=>{
-        console.log(e)
         nav.setOptions({
             title:e,
         })

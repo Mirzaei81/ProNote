@@ -61,9 +61,6 @@ export const Page= () => {
         }
         
     });
-    useEffect(()=>{
-        console.log(Notes)
-    },[Notes])
     const handleUpdate = async ()=>{
         setLoading(true)
         const body = await editor.getText()
@@ -81,7 +78,7 @@ export const Page= () => {
         }
     }
     return (
-        <ThemedView style={{flex:1}}>
+        <ThemedView className='h-full'>
             <View>
                 <AntDesign name="save" size={24} color="black"  onPress={()=>setShow(true)} />
             </View>

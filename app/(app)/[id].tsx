@@ -2,14 +2,13 @@ import { useSession } from "@/hooks/useSession";
 import { noteData } from "@/types";
 import { deleteNote, getNotesByTitle } from "@/utils/api";
 import { useQuery } from "@tanstack/react-query";
-import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
+import { Link, useLocalSearchParams, useNavigation, useRouter } from "expo-router";
 import {   StyleSheet, View } from "react-native";
 import { Portal, Snackbar,Text, useTheme } from "react-native-paper";
 import { useLayoutEffect, useState } from "react";
-import { AntDesign } from "@expo/vector-icons";
+import { FontAwesome5} from "@expo/vector-icons";
 import ValidationComponent from '@/components/ValidationComponent';
 import { ThemedView } from "@/components/ThemedView";
-import useIsReady from "@/hooks/useIsReady";
 import { Image } from "expo-image";
 import { useAssets } from "expo-asset";
 
@@ -35,11 +34,16 @@ export default function Page(){
   useLayoutEffect(() => {
     navigation.setOptions({
       title: id, // Set the title here
-      headerRight: () => (<AntDesign name="delete" size={24} color={theme.colors.onPrimary} onPress={() => setShow(true)} />)
+      headerRight: () => (
+        <View className="flex flex-row space-x-3">
+          <FontAwesome5 name="trash" size={24} color={theme.colors.onPrimary} onPress={() => setShow(true)} />
+          <FontAwesome5 name="edit" size={24} color={theme.colors.onPrimary} onPress={() => router.push(`edit1`)} />
+        </View>
+    )
     });
   }, [navigation]);
     const RemoveNote =()=>{
-             deleteNote(id! as string ,session! ).then((d) =>{console.log(JSON.stringify(d)+"[id]:39"); router.replace("/")}).catch((e) => {
+             deleteNote(id! as string ,session! ).then(() =>{router.replace("/")}).catch((e) => {
                 setError("An Error occourd while trying to connect ot server"+e.toString()),
                 setSnackBarVisible(true)
             })
