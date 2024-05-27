@@ -1,8 +1,10 @@
 import { JwtPayload } from "jsonwebtoken";
+import {PoolConnection} from "mysql2/promise"
 
 declare global {
     namespace Express {
-        export interface Request {
+        export interface Request{
+            conn?: PoolConnection
             user?: CustomJwtPayLoad
         }
     }

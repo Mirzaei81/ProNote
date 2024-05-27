@@ -2,8 +2,8 @@ import { useSession } from "@/hooks/useSession";
 import { noteData } from "@/types";
 import { deleteNote, getNotesByTitle } from "@/utils/api";
 import { useQuery } from "@tanstack/react-query";
-import { Link, useLocalSearchParams, useNavigation, useRouter } from "expo-router";
-import {   StyleSheet, View } from "react-native";
+import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
+import { StyleSheet, View } from "react-native";
 import { Portal, Snackbar,Text, useTheme } from "react-native-paper";
 import { useLayoutEffect, useState } from "react";
 import { FontAwesome5} from "@expo/vector-icons";
@@ -16,8 +16,7 @@ export default function Page(){
   const asset = useAssets([require("@/assets/images/logo.png")])
   const theme = useTheme()
   const navigation = useNavigation()
-  const param = useLocalSearchParams();
-  const id = param.id
+  const {id}= useLocalSearchParams();
   const { session } = useSession();
   const [show, setShow] = useState(false)
   const [error, setError] = useState("")
@@ -37,6 +36,7 @@ export default function Page(){
       headerRight: () => (
         <View className="flex flex-row space-x-3">
           <FontAwesome5 name="trash" size={24} color={theme.colors.onPrimary} onPress={() => setShow(true)} />
+          <FontAwesome5 name="edit" size={24} color={theme.colors.onPrimary} onPress={() => router.push(`/edit/${id}`)} />
         </View>
     )
     });

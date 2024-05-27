@@ -11,7 +11,10 @@ export const getNotes=  async (Token:string)=>{
       'Authorization': `Bearer ${Token}`,
     },
   })
-    const data =res.json()
+    const data =await res.json()
+    if(res.status===401){
+      return{"error":data!.message,status:res.status}
+    }
     return data
 }
     catch(error:any){

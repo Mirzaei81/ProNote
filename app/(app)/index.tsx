@@ -68,6 +68,7 @@ export default function HomeScreen() {
   }, [mainThem])
 
   useEffect(() => {
+    console.log(Notes,session)
     if (Notes) {
       if (Object.hasOwn(Notes, "error")) {
         //@ts-expect-error

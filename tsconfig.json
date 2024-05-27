@@ -2,7 +2,7 @@
   "extends": "expo/tsconfig.base",
   "compilerOptions": {
     "strict": true,
-    "types": ["./server/src/custom"],
+    "types": ["./server/src/global"],
     "paths": {
       "@/*": [
         "./*"

@@ -5,7 +5,7 @@ import { ActivityIndicator, } from "react-native-paper";
 import { useEffect } from "react";
 import { useMaterial3ThemeContext } from "@/hooks/materialThemeProvider";
 import { useStorageState } from "@/hooks/useStorageState";
-import { Page } from "../edit1";
+import { Page } from "../edit/[id]";
 
 export default function RootLayout() {
   const { updateTheme } = useMaterial3ThemeContext();

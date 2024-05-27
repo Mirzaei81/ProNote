@@ -16,10 +16,11 @@ const logIn= async (username:string,password:string):Promise<{message?:string,er
     })
     let  res:Login=  await data.json()
     if(data.status===401){
-      return {"error":"Password Is incorrect"}
+      return {"error":res.error}
     }
     return  {"message":res.Token}
   }catch (e){
+    console.log(e)
       return {"error":"An Unknown error Happend"}
   }
 }
@@ -27,11 +28,14 @@ const signIn = async (username:string,password:string,email:string):Promise<{mes
   try{
     const data = await fetch(uri+'/register',{
       method:'POST',
+      headers: {
+        'Content-Type': 'application/json' // Set the Content-Type header
+      },
       body:JSON.stringify({username: username, password: password,email:email }),
     })
     let  res:register=  await data.json()
-    if(data.status===401){
-      return {"error":"Password Is incorrect"}
+    if(data.status===409){
+      return {"error":res.error}
     }
     return  {"message":res.Token}
   }catch (e){
@@ -71,22 +75,22 @@ export function SessionProvider(props: React.PropsWithChildren) {
       value={{
         signIn:async(username,password,email) => {
           // Perform sign-in logic here
-          const token = await signIn(username,password,email)
-          if (token.hasOwnProperty("error")){
-            return token
+          const res = await signIn(username,password,email)
+          if (res.hasOwnProperty("error")){
+            return res
           }
-          setSession(token.message!);
+          setSession(res.message!);
           return {"message":"successfull"}
         },
         signOut: () => {
           setSession(null);
         },
         logIn:async (username:string,password:string)=>{
-          const token = await logIn(username,password)
-          if (token.hasOwnProperty("error")){
-            return token
+          const res = await logIn(username,password)
+          if (res.hasOwnProperty("error")){
+            return res
           }
-          setSession(token.message!)
+          setSession(res.message!)
           return {"message":"successfull"}
         },
         session:session,

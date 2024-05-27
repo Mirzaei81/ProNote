@@ -7,12 +7,14 @@ export interface getPosts {
 }
 export interface Login{
     message:string,
-    Token:string
+    Token:string,
+    error?:string
 }
 export interface  register{
   message:string,
   user:Object,
   Token:string
+  error?:string,
 }
 export interface note{
   id: Number,
