@@ -34,6 +34,7 @@ export default function RootLayout() {
          options={{headerTransparent:false,headerStyle:{backgroundColor:sourceColor!}} }
     />
       <Stack.Screen name='[id]' options={{headerStyle:{backgroundColor:sourceColor!},title:"Title"} }/>
+      <Stack.Screen name='edit/[id]' options={{headerStyle:{backgroundColor:sourceColor!},title:"Title"} }/>
       </Stack>
   )
 }

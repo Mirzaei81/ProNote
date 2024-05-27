@@ -5,7 +5,7 @@ import { StatusBar, StyleSheet, View } from "react-native";
 import { Text } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-export default function AboutScreen () {
+export default function Page () {
     const assets = useAssets([require("../../assets/images/logo.png")])
     return (
       <ThemedView className="p-2 h-full flex items-center" style={styles.topBar} >

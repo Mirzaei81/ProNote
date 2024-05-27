@@ -7,7 +7,7 @@ const port= process.env.EXPO_PUBLIC_PORT
 const uri = `http://${address}:${port}`
 const logIn= async (username:string,password:string):Promise<{message?:string,error?:string}>=>{
   try{
-    const data = await fetch(uri+'/login',{
+    const data = await fetch(uri+'/user/login',{
       method:'POST',
       headers: {
         'Content-Type': 'application/json' // Set the Content-Type header
@@ -26,7 +26,7 @@ const logIn= async (username:string,password:string):Promise<{message?:string,er
 }
 const signIn = async (username:string,password:string,email:string):Promise<{message?:string,error?:string}>=>{
   try{
-    const data = await fetch(uri+'/register',{
+    const data = await fetch(uri+'/user/register',{
       method:'POST',
       headers: {
         'Content-Type': 'application/json' // Set the Content-Type header
@@ -42,14 +42,14 @@ const signIn = async (username:string,password:string,email:string):Promise<{mes
       return {"error":"An Unknown error Happend" }
   }
 }
-
-const AuthContext = React.createContext<{
+type AuthContextProps={
   logIn: (username:string,password:string) => Promise<{message?:string,error?:string}>|null;
   signIn: (username:string,password:string,email:string) =>Promise<{message?:string,error?:string}>|null;
   signOut: () => void;
   session?: string | null;
   isLoading: boolean;
-}>({
+}
+const AuthContext = React.createContext<AuthContextProps>({
   logIn:()=>null,
   signIn:()=>null,
   signOut: () => null,
