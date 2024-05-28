@@ -12,18 +12,22 @@ export const getNotes=  async (Token:string)=>{
     },
   })
     const data =await res.json()
+    console.log(JSON.stringify(data)+"api:15")
+    console.log(res.status)
     if(res.status===401){
       return{"error":data!.message,status:res.status}
     }
     return data
 }
     catch(error:any){
+      console.error(error)
         return {"error":error}
     };
 }
 export const getNotesByTitle=  async (Token:string,title:string)=>{
   // get allendpoint
   try{
+    console.log(title+"api:30")
   const res = await fetch(uri+'/note/'+title, {
     method: 'GET',
     headers: {
@@ -32,9 +36,11 @@ export const getNotesByTitle=  async (Token:string,title:string)=>{
     },
   })
     const data = res.json()
+    console.log(data)
     return data
 }
     catch(error:any){
+      console.error(error)
         return {"error":error}
     };
 }

@@ -116,6 +116,25 @@ export const Colors = {
   },
 }
 
+export const Themedcolors = [
+  {
+    light: '#FFE082',
+    dark: '#FFE082',
+  },
+  {
+    light: '#3E8260',
+    dark: '#ADF2C7',
+  },
+  {
+    light: '#756FAB',
+    dark: '#E5DFFF',
+  },
+  {
+    light: '#9F6C2C',
+    dark: '#FDDDB9',
+  },
+];
+
 export const lightLinear=  ["#966237", "#85552e", "#744825", "#633c1c", "#533014"]
 export const darkLinear = ['#b38058', '#896245', '#614532', '#3b2b20', '#19120d']
 export const location = [.4,.7,.8,.9,1]

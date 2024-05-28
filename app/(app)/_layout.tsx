@@ -27,12 +27,11 @@ export default function RootLayout() {
     return <Redirect href="/Login"/>
   }
   return (
-      <Stack screenOptions={{headerTitleStyle:{fontSize:fontCtx.fontSize},headerStyle:{backgroundColor:sourceColor!} }}>
-        <Stack.Screen name='index' options={{headerShown:false}}/>
-        <Stack.Screen name='create'  options={{headerTransparent:false}} />
-        <Stack.Screen name='about' options={{headerTransparent:false} } />
-      <Stack.Screen name='[id]'/>
-      <Stack.Screen name='edit/[id]'/>
+    <Stack screenOptions={{ headerTitleStyle: { fontSize: fontCtx.fontSize }, headerStyle: { backgroundColor: sourceColor! } }}>
+      <Stack.Screen name='index' options={{ headerShown: false }} />
+      <Stack.Screen name='create' options={{ headerTransparent: false }} />
+      <Stack.Screen name='about' options={{ headerTransparent: false }} />
+      <Stack.Screen name='[id]' />
       </Stack>
   )
 }

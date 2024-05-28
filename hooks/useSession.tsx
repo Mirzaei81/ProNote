@@ -7,6 +7,7 @@ const port= process.env.EXPO_PUBLIC_PORT
 const uri = `http://${address}:${port}`
 const logIn= async (username:string,password:string):Promise<{message?:string,error?:string}>=>{
   try{
+
     const data = await fetch(uri+'/user/login',{
       method:'POST',
       headers: {
@@ -15,6 +16,7 @@ const logIn= async (username:string,password:string):Promise<{message?:string,er
       body: JSON.stringify({ username: username, password: password }),
     })
     let  res:Login=  await data.json()
+    console.log(res)
     if(data.status===401){
       return {"error":res.error}
     }
@@ -70,6 +72,9 @@ export function useSession() {
 
 export function SessionProvider(props: React.PropsWithChildren) {
   const [[isLoading, session], setSession] = useStorageState('session');
+  useEffect(()=>{
+    setSession("")
+  },[])
   return (
     <AuthContext.Provider
       value={{

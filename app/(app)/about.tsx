@@ -1,3 +1,4 @@
+import CustomText from "@/components/Text";
 import { ThemedView } from "@/components/ThemedView";
 import { useAssets } from "expo-asset";
 import { Image } from "expo-image";
@@ -9,28 +10,28 @@ export default function Page () {
     const assets = useAssets([require("../../assets/images/logo.png")])
     return (
       <ThemedView className="p-2 h-full flex items-center" style={styles.topBar} >
-        <Text className="text-center m-10" variant="titleLarge">about us</Text>
+        <CustomText className="text-center m-10" variant="titleLarge">about us</CustomText>
         {/*@ts-expect-error */}
         <Image contentFit="cover" style={styles.image} source={assets[0]} alt="proNote" />
         <SafeAreaView>
-          <Text variant="bodyMedium" className="m-2">
+          <CustomText variant="bodyMedium" className="m-2">
             Welcome to our amazing note-taking app! We are dedicated to helping you stay
             organized and productive. With our app, you can easily create, edit, and manage your
             notes on the go.
-          </Text>
+          </CustomText>
           <View className="items-center content-center">
-            <Text className="white-text-pre" variant="titleMedium" numberOfLines={5}>
+            <CustomText className="white-text-pre" variant="titleMedium" numberOfLine={5}>
               React Native and Expo{'\n'}
               React Native Paper{'\n'}
               Local Storage Hook{'\n'}
               Tenstack Query{'\n'}
               Express{'\n'}
               MySQL{'\n'}  
-            </Text>
+            </CustomText>
           </View>
-          <Text variant="bodyMedium" className="m-2">
+          <CustomText variant="bodyMedium" className="m-2">
             Thank you for choosing our app for your note-taking needs!
-          </Text>
+          </CustomText>
         </SafeAreaView>
       </ThemedView>
     );

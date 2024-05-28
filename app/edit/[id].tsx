@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { CodeBridge, RichText, TenTapStartKit, Toolbar, useEditorBridge } from "@10play/tentap-editor"
 import { KeyboardAvoidingView, Platform, View } from 'react-native';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
@@ -10,59 +10,32 @@ import { getNotesByTitle, updateNote } from '@/utils/api';
 import { noteData } from '@/types';
 import { ThemedView } from '@/components/ThemedView';
 import ValidationComponent from '@/components/ValidationComponent';
+import { FontSizeProviderContext } from '@/hooks/materialThemeProvider';
+import { editorConfig } from '@/utils/editorConfig';
 
 export const Page = () => {
-    const [loading, setLoading] = useState(false)
+    const fontSize = useContext(FontSizeProviderContext).fontSize;
     const { id } = useLocalSearchParams();
-    const theme = useTheme()
-    const [title, setTitle] = useState<string>('');
-    const [show, setShow] = useState(false)
     const { session } = useSession();
-    const { data: Notes, isLoading } = useQuery<noteData>({
+    const theme = useTheme()
+
+    const [SnackBarVisible, setSnackBarVisible] = useState(false)
+    const [loading, setLoading] = useState(false)
+    const [show, setShow] = useState(false)
+
+    const [error, setError] = useState("")
+    const [title, setTitle] = useState('');
+    const router = useRouter()
+
+    const { data: Notes } = useQuery<noteData>({
         queryKey: [id],
         queryFn: () =>  getNotesByTitle(session!, id as string),
         enabled: (session !== undefined)
     })
-
-    const [SnackBarVisible, setSnackBarVisible] = useState(false)
-    const [error, setError] = useState("")
-    const router = useRouter()
-
-    const customCodeBlockCSS = `
-        code {
-            background-color: ${theme.colors.background};
-            border-radius: 0.25em;
-            border-color: #e45d5d;
-            border-width: 1px;
-            border-style: solid;
-            box-decoration-break: clone;
-            color: ${theme.colors.onBackground};
-            font-size: 0.9rem;
-            padding: 0.25em;
-        }
-        `;
-    const editor = useEditorBridge({
-        autofocus: true,
-        avoidIosKeyboard: true,
-        initialContent: Notes ? Notes.message : "",
-        bridgeExtensions: [
-            ...TenTapStartKit,
-            CodeBridge.configureCSS(customCodeBlockCSS), // Custom codeblock css
-        ],
-        theme: {
-            colorKeyboard: {
-                keyboardRootColor: theme.colors.onSurface
-            },
-            webview: {
-                backgroundColor: theme.colors.primary,
-            },
-
-        }
-
-    });
     useEffect(() => {
-    setTitle(id as string) 
+        setTitle(id as string) 
     },[id])
+    const editor = editorConfig(theme,Notes?Notes.message:"")
     const handleUpdate = async () => {
         setLoading(true)
         const body = await editor.getText()
@@ -82,6 +55,7 @@ export const Page = () => {
     return (
         <>
         <Stack.Screen options={{
+            headerTitleStyle:{fontSize:fontSize},
             headerTitle:title,
             headerRight:()=>(<AntDesign name="save" size={32} color={theme.colors.onPrimary}  onPress={()=>setShow(true)} />)
         }}/>

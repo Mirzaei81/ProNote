@@ -1,33 +1,20 @@
 import { isDynamicThemeSupported } from '@pchmn/expo-material3-theme';
-import { useColorScheme } from 'react-native';
+import { StyleSheet, useColorScheme } from 'react-native';
 import { IconButton, Switch, Text, TouchableRipple } from 'react-native-paper';
 
-import { useMaterial3ThemeContext } from '@/hooks/materialThemeProvider';
+import { FontSizeProviderContext, useMaterial3ThemeContext } from '@/hooks/materialThemeProvider';
 import { Flex } from './Flex';
 import { useStorageState } from '@/hooks/useStorageState';
-
-const colors = [
-  {
-    light: '#FFE082',
-    dark: '#FFE082',
-  },
-  {
-    light: '#3E8260',
-    dark: '#ADF2C7',
-  },
-  {
-    light: '#756FAB',
-    dark: '#E5DFFF',
-  },
-  {
-    light: '#9F6C2C',
-    dark: '#FDDDB9',
-  },
-];
+import CustomText from './Text';
+import { LinearGradient } from 'expo-linear-gradient';
+import { TouchableOpacity } from 'react-native-gesture-handler';
+import { useContext } from 'react';
+import {Themedcolors as colors} from "@/constants/Colors"
 
 export function ThemeEditor() {
   const colorScheme = useColorScheme();
   const { updateTheme, resetTheme } = useMaterial3ThemeContext();
+  const {fontSize,UpdateFontSize}  = useContext(FontSizeProviderContext)
 
   const [[loadingTheme,useDefaultTheme], setUseDefaultTheme] =useStorageState('useDefaultTheme');
   const [[LoadingSourceColor,sourceColor], setSourceColor] = useStorageState('sourceColor');
@@ -53,8 +40,20 @@ export function ThemeEditor() {
         </Flex>
       )}
 
-      <Flex >
-        <Text>Select source color</Text>
+      <Flex direction='row' justify='center' wrap='wrap'>
+        <CustomText>Select source FontSize</CustomText>
+        <Flex direction='row' justify='space-around'>
+          {[10,14, 16, 18,24].map((val) => (
+            <TouchableRipple
+              style={styles.button}
+              onPress={() => UpdateFontSize(val)}
+            >
+              <CustomText className="" style={styles.buttonContent}>{val}</CustomText>
+            </TouchableRipple>
+          ))}
+        </Flex>
+
+        <CustomText>Select source color</CustomText>
         <Flex  direction="row" justify="center">
           {colors.map(({ light, dark }) => {
             const color = colorScheme === 'dark' ? dark : light;
@@ -90,3 +89,25 @@ export function ThemeEditor() {
     </Flex>
   );
 }
+const styles = StyleSheet.create({
+  button: {
+    backgroundColor: 'transparent',
+    overflow:"hidden",
+    borderRadius: 10,
+    height: 80,
+    width: 80,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  ripple: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    borderRadius: 40,
+  },
+  buttonContent: {
+    position: 'relative',
+  },
+});

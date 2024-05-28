@@ -10,21 +10,6 @@ export const setupDatabase =async (conn:PoolConnection)=>{
     catch (e) {
         throw { "error": "Couldn't Connect Create The inital Database" }
     }
-
-    try {
-        await conn.query<ResultSetHeader>('DROP TABLE IF EXISTS user_table;');
-        await conn.query<ResultSetHeader>(
-            `CREATE TABLE  user_table (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-            username VARCHAR(100) NOT NULL,
-            email VARCHAR(100) NOT NULL,
-            password VARCHAR(255)
-          );`
-        );
-    }
-    catch(err) {
-        console.error(err)
-        throw { "error": "Couldn't Connect Create user_table" }
-    }
     try {
         await conn.query<ResultSetHeader>('DROP TABLE IF EXISTS text_table;');
         await conn.query<ResultSetHeader>(
@@ -33,12 +18,36 @@ export const setupDatabase =async (conn:PoolConnection)=>{
             tags VARCHAR(255),
             title VARCHAR(255) NOT NULL,
             body TEXT NOT NULL,
-            user_id INT,
-            FOREIGN KEY (user_id) REFERENCES users(id)
+            user_id INT
           );`
         );
     }
-    catch {
+    catch(e) {
+        console.log(e)
         throw { "error": "Couldn't Connect Create text_table" }
+    }
+    try {
+        await conn.query<ResultSetHeader>('DROP TABLE IF EXISTS user_table;');
+        await conn.query<ResultSetHeader>(
+            `CREATE TABLE  user_table (
+             id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+            username VARCHAR(100) NOT NULL,
+            email VARCHAR(100) NOT NULL,
+            password VARCHAR(255)
+          );`
+        );
+    }
+    catch(err) {
+        throw { "error": "Couldn't Connect Create user_table" }
+    }
+    try {
+        await conn.execute(`
+        ALTER TABLE text_table
+        ADD CONSTRAINT fk_user_id
+        FOREIGN KEY (user_id)
+        REFERENCES user_table(id);`)
+    }
+    catch{
+        throw {"error":"couldn't Update Text_table"}
     }
 }

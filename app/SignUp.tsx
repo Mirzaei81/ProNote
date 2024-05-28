@@ -1,16 +1,17 @@
 import { useSession } from "@/hooks/useSession";
 import {Image} from "expo-image"
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { ThemedView } from '@/components/ThemedView';
 import { Button, HelperText, Snackbar, TextInput } from "react-native-paper";
-import { customText } from "react-native-paper";
 import { StyleSheet } from "react-native";
 import { useAssets } from "expo-asset";
 import { Link, router } from "expo-router";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import CustomText from "@/components/Text";
+import { FontSizeProviderContext } from "@/hooks/materialThemeProvider";
 
 export default function Login() {
+  const  fontSize = useContext(FontSizeProviderContext).fontSize;
 
   const [visible,setVisible] = useState(false)
   const [error,setError] = useState("")  //SnackBar
@@ -49,7 +50,7 @@ export default function Login() {
         <Image contentFit="cover" style={style.image} className="text-white" source={assets[0]}   alt="proNote"/>
         <TextInput
           value={username}
-          style={{fontSize:}}
+          style={{fontSize:fontSize}}
           className="w-4/5 m-2"
           onChangeText={(username) => setUserName( username )}
           label={'Username'}
@@ -58,6 +59,7 @@ export default function Login() {
         <TextInput
           value={email}
           className="w-4/5 m-2"
+          style={{fontSize:fontSize}}
           onChangeText={(username) => setEmail( username )}
           label={'Email'}
           right={<TextInput.Icon icon="email" />}
@@ -73,11 +75,13 @@ export default function Login() {
           className="w-4/5"
           onChangeText={(password) => setPassword( password )}
           label="Password"
+          style={{fontSize:fontSize}}
           secureTextEntry={true}
           right={<TextInput.Icon icon="key" />}
         />
         <TextInput
           value={Checkpassword}
+          style={{fontSize:fontSize}}
           className="w-4/5"
           onChangeText={(password) => setCheckPassword(password)}
           label={'Password Confirmation'}
@@ -100,7 +104,6 @@ export default function Login() {
         <CustomText style={{color:onError}}>
           {error}
           </CustomText>
-          
       </Snackbar>
       </ThemedView>
   );

@@ -1,5 +1,5 @@
 import {   StyleSheet, useColorScheme } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
   SafeAreaView,
   View,
@@ -22,13 +22,15 @@ import { ThemeEditor } from '@/components/ThemeEditor';
 import { rotation} from "simpler-color"
 import { Item } from '@/components/item';
 import { useThemeColor } from '@/hooks/useThemeColor';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import CustomText from '@/components/Text';
+import { FontSizeProviderContext } from '@/hooks/materialThemeProvider';
 
 export default function HomeScreen() {
-  const inset = useSafeAreaInsets()
   const mainThem = useTheme()
+  const fontSize = useContext(FontSizeProviderContext).fontSize
 
   const colorError = useThemeColor({}, 'error');
+  const  onError = useThemeColor({}, 'onError');
   const  surfaceColor = useThemeColor({}, "onBackground");
 
   const colorScheme  = useColorScheme()
@@ -50,8 +52,6 @@ export default function HomeScreen() {
   const [visible,setVisible] = useState(false)
   const onStateChange = ({ open }:{open:boolean}) => setState({ open });
 
-  const nav = useNavigation()
-  const { open } = state;
 
   const {data:Notes,isLoading} = useQuery<noteData>({
     queryKey:[session!],
@@ -68,7 +68,6 @@ export default function HomeScreen() {
   }, [mainThem])
 
   useEffect(() => {
-    console.log(Notes,session)
     if (Notes) {
       if (Object.hasOwn(Notes, "error")) {
         //@ts-expect-error
@@ -129,7 +128,9 @@ export default function HomeScreen() {
         {(!filtredData || filtredData.length === 0) ? (<View className='flex text-center align-center mt-40  justify-center'>
           {/*@ts-expect-error */}
           <Image contentFit="cover" style={styles.image} source={assets[0]} alt='Create First' />
-          <Link href="/create" style={{ color: surfaceColor, textAlign: "center" }}>Create New Note + </Link>
+              <Link href="/create" style={{fontSize:fontSize}} asChild>
+              <CustomText className='text-center'>Create New Note +</CustomText>
+             </Link>
         </View>) :
           <FlatList
             contentContainerStyle={{ gap: 10 }}
@@ -142,19 +143,19 @@ export default function HomeScreen() {
       </SafeAreaView>
       <Portal>
         <Dialog visible={DialogVisible} onDismiss={() => setDialogVisible(false)}>
-          <Dialog.Title>Change theme</Dialog.Title>
+          <Dialog.Title><CustomText>Change theme</CustomText></Dialog.Title>
           <Dialog.Content>
             <ThemeEditor />
           </Dialog.Content>
         </Dialog>
         <FAB.Group
-          open={open}
+          open={state.open}
           visible
-          icon={open ? 'cog' : 'plus'}
+          icon={state.open ? 'cog' : 'plus'}
           actions={[
             {
               icon: 'palette',
-              label: 'palette',
+              label: 'Palette',
               onPress: () => { setDialogVisible(true) },
             },
             {
@@ -171,9 +172,7 @@ export default function HomeScreen() {
           onStateChange={onStateChange}
         />
         <Snackbar style={{ backgroundColor: colorError }} duration={5000} onDismiss={() => setVisible(false)} visible={visible}>
-          {
-            error
-          }
+          <CustomText style={{color:onError}}>{error}</CustomText>
         </Snackbar>
       </Portal>
     </ThemedView>

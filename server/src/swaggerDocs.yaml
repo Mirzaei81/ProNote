@@ -1,0 +1,127 @@
+openapi: 3.0.0
+info:
+  title: Note API
+  version: 1.0.0
+paths:
+  /notes/{id}:
+    get:
+      summary: Returns a specific note by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: The requested note
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Note'
+    put:
+      summary: Updates a specific note by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Note'
+      responses:
+        '200':
+          description: The updated note
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Note'
+  /notes:
+    get:
+      summary: Returns a list of notes
+      responses:
+        '200':
+          description: An array of notes
+        '500':
+          description: Error in Database Creation
+        '400':
+          description: Token is invalid; shouldn't even be called
+    post:
+      summary: Creates a new note
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Note'
+      responses:
+        '200':
+          description: The newly created note
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Note'
+                paths:
+  /user:
+    /register:
+      post:
+        tags:
+          - Register
+        summary: Register a new user
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        responses:
+          '200':
+            description: User registered successfully
+          '400':
+            description: Bad request
+          '409':
+            description: Duplicate username
+  /login:
+    post:
+      tags:
+        - Login
+      summary: Log in 
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '200':
+          description: User registered successfully
+        '400':
+          description: Bad request
+        '409':
+          description: Duplicate username
+components:
+  schemas:
+    Note:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        body:
+          type: string
+        user_id:
+          type:
+    User:
+      type: object
+      properties:
+        id:
+         type: integer
+        username:
+          type: string
+        email: 
+          type: string
+        password:
+          type: string

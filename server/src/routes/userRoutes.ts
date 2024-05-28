@@ -4,6 +4,7 @@ import { CountResult, LoginResault } from "src/types";
 import jwt from "jsonwebtoken"
 import {encryptPass,Matching} from "./../Utils/encryptPass.js"
 
+
 export const UserRouter = Router()
 const myKey = process.env.PRIVATEKEY||"MySecret";
 
@@ -56,12 +57,13 @@ UserRouter.post('/login', async (req, res) => {
   try {
     const {username, password } = req.body;
     const [data, fields] = await req.conn.query<LoginResault[]>(
-      'select * from `users` where `username` = ? limit 1'
+      'select * from `user_table` where `username` = ? limit 1'
       ,[username]
     )
+    console.log(data)
     if (data.length === 0) {
       req.conn.release()
-      return res.status(401).json({error: 'User Does not exist' });
+      return res.status(401).json({error: 'User Does not exist please Sign in ' });
     }
     const match = await Matching(password,data[0].password)
     if (match){

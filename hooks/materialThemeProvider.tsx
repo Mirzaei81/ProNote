@@ -12,6 +12,7 @@ import {
 
 import { Flex } from '../components/Flex';
 import { useStorageState } from './useStorageState';
+import { RFValue } from 'react-native-responsive-fontsize';
 
 type Material3ThemeProviderProps = {
   theme: Material3Theme;
@@ -39,7 +40,7 @@ export function Material3ThemeProvider({
     fallbackSourceColor,
   });
   const UpdateFontSize = (val: number) => {
-    setFontSize(val.toString())
+    setFontSize(RFValue(val).toString())
   }
   const fontSize = Number(FontSize)
   const paperTheme =

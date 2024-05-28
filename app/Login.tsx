@@ -1,14 +1,17 @@
 import { useSession } from "@/hooks/useSession";
 import {Image} from "expo-image"
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { ThemedView } from '@/components/ThemedView';
 import { ActivityIndicator, Button, HelperText, Snackbar, Text, TextInput } from "react-native-paper";
 import { StyleSheet, View } from "react-native";
 import { useAssets } from "expo-asset";
 import { Link, router } from "expo-router";
 import { useThemeColor } from "@/hooks/useThemeColor";
+import CustomText from "@/components/Text";
+import { FontSizeProviderContext } from "@/hooks/materialThemeProvider";
 
 export default function Login() {
+  const  fontSize = useContext(FontSizeProviderContext).fontSize;
   const colorError = useThemeColor({}, 'error');
   const [visible,setVisible] = useState(false)
   const assets = useAssets([require("../assets/images/logo.png")])
@@ -40,7 +43,7 @@ export default function Login() {
           label="Username"
           onChangeText={(username) => setUserName( username )}
           right={<TextInput.Icon icon="account" />}
-
+          style={{fontSize:fontSize}}
         />
         <TextInput
           value={password}
@@ -50,6 +53,7 @@ export default function Login() {
           placeholder={'Password'}
           secureTextEntry={true} 
           right={<TextInput.Icon icon="key" />}
+          style={{fontSize:fontSize}}
         />
         <Button
           mode="contained-tonal" 
@@ -58,16 +62,14 @@ export default function Login() {
           onPress={handleLogin}
         >
         {loading? (
-          <View className="flex items-center justify-center content-center">
+          <View className="flex flex-1 items-center justify-center content-center">
             <ActivityIndicator style={style.activity}  size={40} />
           </View>
-      ) : "Login"
+      ) :<CustomText>Login</CustomText> 
       }</Button>
         <Link  href="/SignUp" asChild><Text>Don't Have an account?</Text></Link>
       <Snackbar style={{backgroundColor:colorError}}  duration={5000} onDismiss={() => setVisible(false)} visible={visible}>
-        {
-          error
-        }
+       <CustomText>{error}</CustomText>
       </Snackbar>
       </ThemedView>
   );

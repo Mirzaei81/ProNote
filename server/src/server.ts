@@ -1,8 +1,6 @@
 import {getConnection} from "./Utils/CreatePools.js"
-import {findNullKeysRecursive} from "./Utils/checkForNull.js"
-import { CountResult, LoginResault } from "./types.js";
 import cors from "cors"
-import express,{Express,Request,Response} from "express"
+import express,{Express} from "express"
 import bodyParser from "body-parser"
 import { VerifyJWT} from "./Utils/Verify.js";
 import { NoteRoute } from "./routes/notesRoutes.js";

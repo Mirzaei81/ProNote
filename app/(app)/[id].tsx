@@ -11,6 +11,7 @@ import ValidationComponent from '@/components/ValidationComponent';
 import { ThemedView } from "@/components/ThemedView";
 import { Image } from "expo-image";
 import { useAssets } from "expo-asset";
+import CustomText from "@/components/Text";
 
 export default function Page(){
   const asset = useAssets([require("@/assets/images/logo.png")])
@@ -27,7 +28,6 @@ export default function Page(){
     const { data: Notes, isLoading } = useQuery<noteData>({
         queryKey: [id],
         queryFn: () => (typeof id==="string" ? getNotesByTitle(session!,id):{data:[],message:""}),
-        enabled:(session!==undefined)
     })
 
   useLayoutEffect(() => {
@@ -52,17 +52,10 @@ export default function Page(){
       setLoading(true)
       RemoveNote()
     }
-    if(isLoading){
-      return(
-      <View className='h-full flex items-center content-center bg-[rgb(82,62,39)]'>
-        {/*@ts-ignore*/}
-        <Image source={asset[0]} style={styles.image} alt='proNote' />
-      </View>
-    )
-  }
+    console.log(Notes+"[id]:56")
     return(
       <ThemedView className="h-full p-2">
-        <Text>{Notes && Notes?.data[0].body}</Text>
+        <CustomText>{Notes && Notes?.data[0].body}</CustomText>
         <Portal>
           <ValidationComponent setShow={setShow} loading={loading} handler={handleCreate} show={show} />
             <Snackbar style={{ backgroundColor: theme.colors.error }} duration={5000} onDismiss={() => setSnackBarVisible(false)} visible={SnackBarVisible}>

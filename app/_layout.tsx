@@ -5,7 +5,7 @@ import 'react-native-reanimated';
 import { SessionProvider } from '@/hooks/useSession';
 import { DefaultTheme,PaperProvider } from 'react-native-paper';
 import { Slot } from 'expo-router';
-import { AccessibilityInfo, useColorScheme } from 'react-native';
+import { AccessibilityInfo, LogBox, useColorScheme } from 'react-native';
 import { Colors } from '@/constants/Colors';
 import 'react-native-reanimated'
 import 'react-native-gesture-handler'
@@ -57,6 +57,10 @@ export default function RootLayout() {
       setisReady(true)
     }
   }, [loaded]);
+
+  if(!__DEV__){
+  LogBox.ignoreLogs(["Warning: TextInput.Icon:"]);
+  }
 
   return (
     <SessionProvider>

@@ -1,7 +1,7 @@
 import mysql from "mysql2/promise"
 import { Request,Response,NextFunction } from "express";
 import dotenv  from "dotenv"
-import { setupDatabase } from "src/DBSetup";
+import { setupDatabase } from "src/setupDatabase";
 // Create a connection pool
 dotenv.config()
 const HOST = process.env.HOST 

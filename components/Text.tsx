@@ -1,13 +1,22 @@
 import { FontSizeProviderContext } from "@/hooks/materialThemeProvider";
 import {  RFValue } from "react-native-responsive-fontsize";
-import { useContext } from "react";
+import { PropsWithChildren, useContext } from "react";
 import { Text } from "react-native-paper"
 import { TextStyle } from "react-native";
+import { VariantProp } from "react-native-paper/lib/typescript/components/Typography/types";
 
-export default function CustomText({children,style}:{children:React.ReactNode,style?:TextStyle}){
-    const  fontSize = RFValue(useContext(FontSizeProviderContext).fontSize);
+interface CustomTextProps{
+    style?:TextStyle
+    className?:string
+    variant?:VariantProp<never>
+    numberOfLine?:number
+}
+export default function CustomText({children,style,className,variant,numberOfLine,...otherProps}:PropsWithChildren<CustomTextProps>){
+    const  fontSize = RFValue(useContext(FontSizeProviderContext).fontSize)||18;
     return(
-        <Text style={{fontSize,...style}}>{children}</Text>
+        <Text style={[{fontSize:fontSize},style]} variant={variant}
+         numberOfLines={numberOfLine} className={className}
+         {...otherProps}
+          >{children}</Text>
     )
-
 }
