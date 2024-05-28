@@ -4,5 +4,11 @@
         "deferred": true,
         "runAllTestsOnStartup": false,
 
+    },
+    "files.exclude": {
+        "**/.git": false
+    },
+    "search.exclude": {
+        "**/node_modules": false
     }
 }

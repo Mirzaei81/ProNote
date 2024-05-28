@@ -5,13 +5,14 @@ export function editorConfig(theme:MD3Theme,initialMessage:string){
     const customCodeBlockCSS = `
         * {
             background-color #ffdede;
-        };
-        body{
-            color:'white';
+            padding:0.25rem;
+        }
+        p {
+            color:${theme.colors.onSurface};
         }
         ::placeholder{
-            color:${theme.colors.onSurface}
-        };
+            color:${theme.colors.onSurface};
+        }
         code {
             background-color: ${theme.colors.background};
             border-radius: 0.25em;

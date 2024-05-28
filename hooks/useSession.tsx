@@ -74,9 +74,6 @@ export function useSession() {
 
 export function SessionProvider(props: React.PropsWithChildren) {
   const [[isLoading, session], setSession] = useStorageState('session');
-  useEffect(()=>{
-    setSession("")
-  },[])
   return (
     <AuthContext.Provider
       value={{

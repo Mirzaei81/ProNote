@@ -9,7 +9,7 @@ import {
 import {  useSession } from '@/hooks/useSession';
 import { Image } from 'expo-image';
 import {   Dialog, FAB, Portal, Searchbar, Snackbar, Text,useTheme } from 'react-native-paper';
-import { Link, useNavigation, useRouter } from 'expo-router';
+import { Link, useRouter } from 'expo-router';
 import { ThemedView } from '@/components/ThemedView';
 import ShimmerPlaceHolder from 'react-native-shimmer-placeholder'
 import { LinearGradient } from 'expo-linear-gradient';
@@ -24,6 +24,7 @@ import { Item } from '@/components/item';
 import { useThemeColor } from '@/hooks/useThemeColor';
 import CustomText from '@/components/Text';
 import { FontSizeProviderContext } from '@/hooks/materialThemeProvider';
+import { FontAwesome } from '@expo/vector-icons';
 
 export default function HomeScreen() {
   const mainThem = useTheme()
@@ -46,6 +47,7 @@ export default function HomeScreen() {
   const [filtredData,setFilterdData] = React.useState<note[]>([])
   const [state, setState] = React.useState({ open: false });
   const [DialogVisible,setDialogVisible] =  useState(false)
+  const [FabVisible ,setFabVisible] = useState(true)
   const [ItemsColorSCheme,setColorScheme] = useState<string[]>([])
 
   const [error,setError] = useState("")  //Error Handling
@@ -82,6 +84,7 @@ export default function HomeScreen() {
   }, [Notes])
 
   const onChangeSearch = (query: string) => {
+    console.log(query)
     setSearchQuery(query)
 
     if (data) {
@@ -106,7 +109,7 @@ export default function HomeScreen() {
         <Searchbar
           placeholder='Search'
           className='my-2'
-          placeholderTextColor={surfaceColor}
+          onChangeText={(s)=>{onChangeSearch(s),console.log(s)}}
           value={searchQuery}
         />
         {[0, 1, 2, 3, 4, 5, 6, 7].map((_, idx) => (
@@ -117,13 +120,18 @@ export default function HomeScreen() {
   }
   return (
     <ThemedView style={styles.TopBar} className="h-full flex flex-col justify-center px-10" >
-      <Searchbar
-        placeholder='Search'
-        className='my-2'
-        onChangeText={onChangeSearch}
-        placeholderTextColor={surfaceColor}
-        value={searchQuery}
-      />
+      <View className='flex flex-row mt-5'>
+        <FontAwesome style={{alignSelf:"center",marginRight:10}} name='sign-out' size={24} color={surfaceColor} onPress={() => {
+           router.push("/signOut");console.log("routing") }} />
+        <Searchbar
+          placeholder='Search'
+          className='my-2 grow'
+          onChangeText={onChangeSearch}
+          style={{fontSize:fontSize}}
+          placeholderTextColor={surfaceColor}
+          value={searchQuery}
+        />
+      </View>
       <SafeAreaView className='flex flex-1'>
         {(!filtredData || filtredData.length === 0) ? (<View className='flex text-center align-center mt-40  justify-center'>
           {/*@ts-expect-error */}
@@ -150,18 +158,18 @@ export default function HomeScreen() {
         </Dialog>
         <FAB.Group
           open={state.open}
-          visible
+          visible={FabVisible}
           icon={state.open ? 'cog' : 'plus'}
           actions={[
             {
               icon: 'palette',
               label: 'Palette',
-              onPress: () => { setDialogVisible(true) },
+              onPress: () => { setDialogVisible(true)},
             },
             {
               icon: 'note-plus',
               label: 'Create Note',
-              onPress: () => router.push("/create"),
+              onPress: () =>{setFabVisible(false,()=>router.push("/create"))},
             },
             {
               icon: 'information-outline',

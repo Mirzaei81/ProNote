@@ -28,16 +28,15 @@ export const getNotes=  async (Token:string)=>{
 export const getNotesByTitle=  async (Token:string,title:string)=>{
   // get allendpoint
   try{
-  const res = await fetch(uri+'/note/'+title, {
+  const res = await fetch(uri+'/note/'+title.trim(), {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${Token}`,
     },
   })
-  console.log(await res.text())
     const data = await res.json()
-    console.log(JSON.stringify(data)+"api42")
+    console.log(JSON.stringify(data)+"api:42")
     return data
 }
     catch(error:any){
@@ -45,15 +44,15 @@ export const getNotesByTitle=  async (Token:string,title:string)=>{
         return {"error":error}
     };
 }
-export const updateNote = async (title:string, body:string,Token:string) => {
+export const updateNote = async (id:string,title:string, body:string,Token:string) => {
     try {
-      const response = await fetch(uri+`/note/${title}`, {
+      const response = await fetch(uri+`/note/${id.trim()}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
             'Authorization': `Bearer ${Token}`,
         },
-        body: JSON.stringify({ title, body }),
+        body: JSON.stringify({ title:title.trim(), body }),
       });
       const data = await response.json();
       return {message: 'Succesfull'}
@@ -63,7 +62,7 @@ export const updateNote = async (title:string, body:string,Token:string) => {
   };
 export const deleteNote = async (id:string,Token:string) => {
   //delete
-  const data = await fetch(uri+`/note/${id}`, {
+  const data = await fetch(uri+`/note/${id.trim()}`, {
     method: 'DELETE',
     headers: {
         'Content-Type': 'application/json',
@@ -84,16 +83,17 @@ export const  postNote = async (Token:string,title:string,body:string) => {
     },
 
     body: JSON.stringify({
-      tags:"",
-      title: title,
+      title: title.trim(),
       body: body,
     }),
   })
     .then((response) => response.json())
     .then((data) => {
+      console.log(data)
       return {message: 'Succesfull'}
     })
     .catch((error) => {
+      console.error(error)
       return {'Error': error};
     });
 } 

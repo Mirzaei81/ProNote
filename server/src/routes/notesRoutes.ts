@@ -12,6 +12,7 @@ NoteRoute.put('/:id', async (req, res) => {
         return;
     }
     const { id } = req.params;
+    const userId = req.user!.id;
     try {
         const { title, body } = req.body;
         const nullKeys: string[] = findNullKeysRecursive({ title: title, body: body })
@@ -20,9 +21,10 @@ NoteRoute.put('/:id', async (req, res) => {
             req.conn.release()
             return;
         }
+        console.log(id,title,body,userId ,"notesRoutes:24")
         const [data, fields] = await req.conn.execute(
-            'UPDATE text_table SET body = ? , title = ? where id =? ;'
-            , [title, body, id]
+            'UPDATE text_table SET body = ? , title = ? where id= ? and user_id = ?  ;'
+            , [body,title,id,userId]
         )
         res.json({ message: 'Succesfull' });
         req.conn.release()
@@ -68,9 +70,9 @@ NoteRoute.post('/', async (req, res) => {
     }
     const id = req.user!.id;
     try {
-        const { tags, title, body } = req.body;
+        const { title, body } = req.body;
 
-        const nullKeys: string[] = findNullKeysRecursive({ id: id, body: body, title: title, tags: tags })
+        const nullKeys: string[] = findNullKeysRecursive({ id: id, body: body, title: title})
 
         if (nullKeys.length !== 0) {
             res.status(400).json({ error: `${nullKeys} Can't be null` })
@@ -93,8 +95,8 @@ NoteRoute.post('/', async (req, res) => {
         }
         console.log(id+"at noteRoute:94")
         const [data] = await req.conn.execute(
-            'INSERT INTO text_table(`tags`, `title`, `body`,`user_id`) VALUES (?, ?, ?,?);'
-            , [tags, title, body, id]
+            'INSERT INTO text_table(`title`, `body`,`user_id`) VALUES (?, ?,?);'
+            , [ title, body, id]
         )
         res.json({ message: 'Succesfull' });
         req.conn.release()
@@ -152,11 +154,12 @@ NoteRoute.get('/:id', async (req: Request, res) => {
             req.conn.release()
             return;
         }
+        console.log(Userid!.id,id,"NoteRoute:158")
         const [data, fields] = await req.conn.execute(
             'SELECT * FROM text_table WHERE `user_id` = ? and `title` = ? ;'
             , [Userid!.id, id]
         )
-        console.log(data)
+        console.log(data,"NoteRoute:162")
         res.json({ message: 'Succesfull', data: data });
         req.conn.release()
         return;

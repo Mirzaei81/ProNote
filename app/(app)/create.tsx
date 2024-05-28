@@ -40,9 +40,9 @@ export default function CreateSCreen({ navigation, route }:any){
     const handleCreate = async ()=>{
         setLoading(true)
         const body = await editor.getHTML()
-        if (body.length === 0 || title.length === 0) {
+        if (title.length === 0) {
             console.log(body,title)
-            setError("Body or Title shouldn't be Empty ")
+            setError("Title shouldn't be Empty ")
             setSnackBarVisible(true)
             setLoading(false)
             setShow(false)
@@ -76,7 +76,7 @@ export default function CreateSCreen({ navigation, route }:any){
         <Portal>
             <ValidationComponent setShow={setShow} loading={loading} handler={handleCreate} show={show} />
       </Portal>
-            <TextInput label="Title" style={{fontSize:fontSize}}  mode='flat' value={title} onChangeText={(e) => { titleChange(e) }} />
+            <TextInput label="Title" style={{fontSize:fontSize}}  mode='flat' value={title} onChangeText={titleChange} />
             <RichText editor={editor} />
             <KeyboardAvoidingView
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}

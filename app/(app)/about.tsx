@@ -2,6 +2,7 @@ import CustomText from "@/components/Text";
 import { ThemedView } from "@/components/ThemedView";
 import { useAssets } from "expo-asset";
 import { Image } from "expo-image";
+import { Link } from "expo-router";
 import { StatusBar, StyleSheet, View } from "react-native";
 import { Text } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -11,8 +12,10 @@ export default function Page () {
     return (
       <ThemedView className="p-2 h-full flex items-center" style={styles.topBar} >
         <CustomText className="text-center m-10" variant="titleLarge">about us</CustomText>
+        <Link href="/" asChild>
         {/*@ts-expect-error */}
-        <Image contentFit="cover" style={styles.image} source={assets[0]} alt="proNote" />
+          <Image contentFit="cover" style={styles.image} source={assets[0]} alt="proNote" />
+        </Link>
         <SafeAreaView>
           <CustomText variant="bodyMedium" className="m-2">
             Welcome to our amazing note-taking app! We are dedicated to helping you stay

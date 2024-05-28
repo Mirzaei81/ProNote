@@ -40,6 +40,7 @@ UserRouter.post('/register', async (req:Request, res:Response) => {
     const [resault,fields] = await req.conn.execute(sql,values)
 
     req.conn.release()
+    //@ts-ignore
     const Token = jwt.sign({username:username,passHashed:passHashed,id:resault.insertId},myKey)
     res.json({ message: 'User registered',Token:Token});
   } catch (error) {
@@ -62,7 +63,6 @@ UserRouter.post('/login', async (req, res) => {
       'select * from `user_table` where `username` = ? limit 1'
       ,[username]
     )
-    console.log(data)
     if (data.length === 0) {
       req.conn.release()
       return res.status(401).json({error: 'User Does not exist please Sign in ' });
