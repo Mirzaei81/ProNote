@@ -77,7 +77,7 @@ export default function CreateSCreen({ navigation, route }:any){
             <ValidationComponent setShow={setShow} loading={loading} handler={handleCreate} show={show} />
       </Portal>
             <TextInput label="Title" style={{fontSize:fontSize}}  mode='flat' value={title} onChangeText={(e) => { titleChange(e) }} />
-            <RichText  editor={editor} />
+            <RichText editor={editor} />
             <KeyboardAvoidingView
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                 style={{

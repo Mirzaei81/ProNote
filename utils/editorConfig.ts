@@ -3,10 +3,13 @@ import { MD3Theme } from "react-native-paper";
 
 export function editorConfig(theme:MD3Theme,initialMessage:string){
     const customCodeBlockCSS = `
-        ::placeholder{
-            color:${theme.colors.onSurface}
+        * {
+            background-color #ffdede;
         };
-        *{
+        body{
+            color:'white';
+        }
+        ::placeholder{
             color:${theme.colors.onSurface}
         };
         code {
@@ -25,7 +28,6 @@ export function editorConfig(theme:MD3Theme,initialMessage:string){
         autofocus: true,
         avoidIosKeyboard: true,
         initialContent: initialMessage,
-        
         bridgeExtensions: [
             ...TenTapStartKit,
             PlaceholderBridge.configureExtension({
@@ -35,7 +37,7 @@ export function editorConfig(theme:MD3Theme,initialMessage:string){
         ],
         theme: {
             colorKeyboard: {
-                keyboardRootColor: theme.colors.onSurface
+                keyboardRootColor: 'white'
             },
             webview: {
                 backgroundColor: theme.colors.surface,
