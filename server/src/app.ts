@@ -3,7 +3,7 @@ import  swaggerUi from "swagger-ui-express"
 import fs from "fs"
 import YAML from "yaml"
 
-const file =  fs.readFileSync("./swaggerDocs.yaml","utf-8")
+const file =  fs.readFileSync("./src/swaggerDocs.yaml","utf-8")
 const specs = YAML.parse(file)
 const port = process.env.PORT||3000;
 const address = process.env.LOCALADDRESS||'0.0.0.0'
