@@ -10,14 +10,14 @@ import { useThemeColor } from "@/hooks/useThemeColor";
 import CustomText from "@/components/Text";
 import { FontSizeProviderContext } from "@/hooks/materialThemeProvider";
 
-export default function Login() {
+export default function Page() {
   const  fontSize = useContext(FontSizeProviderContext).fontSize;
   const colorError = useThemeColor({}, 'error');
   const [visible,setVisible] = useState(false)
   const assets = useAssets([require("../assets/images/logo.png")])
   const {logIn} = useSession()
-  const [username,setUserName] = useState("Mirzaei28")
-  const [password,setPassword] = useState("@m1r@rsh1@")
+  const [username,setUserName] = useState("")
+  const [password,setPassword] = useState("")
   const [error,setError] = useState("")
   const [loading,setLoading] = useState(false)
   const handleLogin =async ()=>  {
@@ -67,7 +67,7 @@ export default function Login() {
           </View>
       ) :<CustomText>Login</CustomText> 
       }</Button>
-        <Link  href="/SignUp" asChild><Text>Don't Have an account?</Text></Link>
+        <Link  href="/SignUp" asChild><CustomText>Don't Have an account?</CustomText></Link>
       <Snackbar style={{backgroundColor:colorError}}  duration={5000} onDismiss={() => setVisible(false)} visible={visible}>
        <CustomText>{error}</CustomText>
       </Snackbar>
@@ -86,7 +86,6 @@ const style = StyleSheet.create({
   },
   activity:{
     alignItems:"center",
-    alignContent:"center",
-    justifyContent:"center",
+    verticalAlign:"middle"
   }
 })

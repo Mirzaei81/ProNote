@@ -39,7 +39,7 @@ export default function CreateSCreen({ navigation, route }:any){
 
     const handleCreate = async ()=>{
         setLoading(true)
-        const body = await editor.getText()
+        const body = await editor.getHTML()
         if (body.length === 0 || title.length === 0) {
             console.log(body,title)
             setError("Body or Title shouldn't be Empty ")

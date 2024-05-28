@@ -1,19 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import { useStorageState } from './useStorageState';
 import { Login, register } from '@/types';
-
-const address = process.env.EXPO_PUBLIC_LOCALADDRESS
+import  Constants from "expo-constants"
+if (!Constants?.expoConfig?.hostUri) throw "Couldnot get the host uri"
+const address = Constants.expoConfig.hostUri.split(`:`).shift()
 const port= process.env.EXPO_PUBLIC_PORT 
 const uri = `http://${address}:${port}`
 const logIn= async (username:string,password:string):Promise<{message?:string,error?:string}>=>{
   try{
-
     const data = await fetch(uri+'/user/login',{
       method:'POST',
       headers: {
         'Content-Type': 'application/json' // Set the Content-Type header
       },
-      body: JSON.stringify({ username: username, password: password }),
+      body: JSON.stringify({ username: username.trim(), password: password.trim() }),
     })
     let  res:Login=  await data.json()
     console.log(res)
@@ -28,6 +28,7 @@ const logIn= async (username:string,password:string):Promise<{message?:string,er
 }
 const signIn = async (username:string,password:string,email:string):Promise<{message?:string,error?:string}>=>{
   try{
+    console.log(address,port,uri)
     const data = await fetch(uri+'/user/register',{
       method:'POST',
       headers: {
@@ -41,6 +42,7 @@ const signIn = async (username:string,password:string,email:string):Promise<{mes
     }
     return  {"message":res.Token}
   }catch (e){
+    console.error(e)
       return {"error":"An Unknown error Happend" }
   }
 }

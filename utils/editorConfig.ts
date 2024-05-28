@@ -1,8 +1,14 @@
-import { CodeBridge, TenTapStartKit, useEditorBridge } from "@10play/tentap-editor";
+import { CodeBridge, PlaceholderBridge, TenTapStartKit, useEditorBridge } from "@10play/tentap-editor";
 import { MD3Theme } from "react-native-paper";
 
 export function editorConfig(theme:MD3Theme,initialMessage:string){
     const customCodeBlockCSS = `
+        ::placeholder{
+            color:${theme.colors.onSurface}
+        };
+        *{
+            color:${theme.colors.onSurface}
+        };
         code {
             background-color: ${theme.colors.background};
             border-radius: 0.25em;
@@ -10,7 +16,7 @@ export function editorConfig(theme:MD3Theme,initialMessage:string){
             border-width: 1px;
             border-style: solid;
             box-decoration-break: clone;
-            color: ${theme.colors.onBackground};
+            color: ${theme.colors.onSurface};
             font-size: 0.9rem;
             padding: 0.25em;
         }
@@ -19,8 +25,12 @@ export function editorConfig(theme:MD3Theme,initialMessage:string){
         autofocus: true,
         avoidIosKeyboard: true,
         initialContent: initialMessage,
+        
         bridgeExtensions: [
             ...TenTapStartKit,
+            PlaceholderBridge.configureExtension({
+                placeholder: 'Type something...',
+            }),
             CodeBridge.configureCSS(customCodeBlockCSS), // Custom codeblock css
         ],
         theme: {
@@ -28,7 +38,7 @@ export function editorConfig(theme:MD3Theme,initialMessage:string){
                 keyboardRootColor: theme.colors.onSurface
             },
             webview: {
-                backgroundColor: theme.colors.primary,
+                backgroundColor: theme.colors.surface,
             },
         }
     });

@@ -9,7 +9,6 @@ import { useLayoutEffect, useState } from "react";
 import { FontAwesome5} from "@expo/vector-icons";
 import ValidationComponent from '@/components/ValidationComponent';
 import { ThemedView } from "@/components/ThemedView";
-import { Image } from "expo-image";
 import { useAssets } from "expo-asset";
 import CustomText from "@/components/Text";
 

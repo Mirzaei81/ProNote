@@ -2,11 +2,12 @@ import {server} from "./server.js"
 import  swaggerUi from "swagger-ui-express"
 import fs from "fs"
 import YAML from "yaml"
+import { getIPAddress } from "./Utils/getNetworkadress.js"
 
 const file =  fs.readFileSync("./src/swaggerDocs.yaml","utf-8")
 const specs = YAML.parse(file)
 const port = process.env.PORT||3000;
-const address = process.env.LOCALADDRESS||'0.0.0.0'
+const address = getIPAddress()
 server.use(
   "/api-docs",
   swaggerUi.serve,

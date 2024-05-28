@@ -18,8 +18,9 @@ UserRouter.post('/register', async (req:Request, res:Response) => {
   try {
     const { username, email, password } = req.body;
     //checking the userName and Emaill Exist for duplicaiton
+    console.log(username,email,password)
     const [count] = await req.conn.query<CountResult[]>(
-      'SELECT COUNT(*) FROM users WHERE username = ? AND email= ?',
+      'SELECT COUNT(*) FROM user_table WHERE username = ? AND email= ?',
       [username, email],
     );
     if (count[0]["COUNT(*)"]>0){
@@ -30,15 +31,16 @@ UserRouter.post('/register', async (req:Request, res:Response) => {
       req.conn.release()
       return
     }
+    console.log(username,email,password)
     const passHashed = await encryptPass(password)
     //register the user 
-    const sql = 'INSERT INTO users (`username`, `email`, `password`) VALUES (?, ?, ?);'
+    const sql = 'INSERT INTO user_table (`username`, `email`, `password`) VALUES (?, ?, ?);'
     const values = [username,email,passHashed];
     
     const [resault,fields] = await req.conn.execute(sql,values)
 
     req.conn.release()
-    const Token = jwt.sign({username:username,passHashed:passHashed},myKey)
+    const Token = jwt.sign({username:username,passHashed:passHashed,id:resault.insertId},myKey)
     res.json({ message: 'User registered',Token:Token});
   } catch (error) {
     console.error(error)

@@ -1,4 +1,7 @@
-const address = process.env.EXPO_PUBLIC_LOCALADDRESS
+import  Constants  from "expo-constants"
+
+if (!Constants?.expoConfig?.hostUri) throw "Couldnot get the host uri"
+const address = Constants.expoConfig.hostUri.split(`:`).shift()
 const port= process.env.EXPO_PUBLIC_PORT 
 const uri = `http://${address}:${port}`
 export const getNotes=  async (Token:string)=>{
@@ -12,8 +15,6 @@ export const getNotes=  async (Token:string)=>{
     },
   })
     const data =await res.json()
-    console.log(JSON.stringify(data)+"api:15")
-    console.log(res.status)
     if(res.status===401){
       return{"error":data!.message,status:res.status}
     }
@@ -27,7 +28,6 @@ export const getNotes=  async (Token:string)=>{
 export const getNotesByTitle=  async (Token:string,title:string)=>{
   // get allendpoint
   try{
-    console.log(title+"api:30")
   const res = await fetch(uri+'/note/'+title, {
     method: 'GET',
     headers: {
@@ -35,8 +35,9 @@ export const getNotesByTitle=  async (Token:string,title:string)=>{
       'Authorization': `Bearer ${Token}`,
     },
   })
-    const data = res.json()
-    console.log(data)
+  console.log(await res.text())
+    const data = await res.json()
+    console.log(JSON.stringify(data)+"api42")
     return data
 }
     catch(error:any){

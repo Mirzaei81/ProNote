@@ -56,11 +56,11 @@ export default function RootLayout() {
       SplashScreen.hideAsync()
       setisReady(true)
     }
+    if (__DEV__) {
+      LogBox.ignoreLogs(["Warning: TextInput.Icon:", "Warning: ","Editor"]);
+    }
   }, [loaded]);
 
-  if(!__DEV__){
-  LogBox.ignoreLogs(["Warning: TextInput.Icon:"]);
-  }
 
   return (
     <SessionProvider>

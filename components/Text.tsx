@@ -1,8 +1,8 @@
 import { FontSizeProviderContext } from "@/hooks/materialThemeProvider";
 import {  RFValue } from "react-native-responsive-fontsize";
-import { PropsWithChildren, useContext } from "react";
-import { Text } from "react-native-paper"
-import { TextStyle } from "react-native";
+import React, { LegacyRef, PropsWithChildren, useContext } from "react";
+import { customText, Text } from "react-native-paper"
+import { TextStyle, View } from "react-native";
 import { VariantProp } from "react-native-paper/lib/typescript/components/Typography/types";
 
 interface CustomTextProps{
@@ -11,12 +11,14 @@ interface CustomTextProps{
     variant?:VariantProp<never>
     numberOfLine?:number
 }
-export default function CustomText({children,style,className,variant,numberOfLine,...otherProps}:PropsWithChildren<CustomTextProps>){
+const  CustomText= React.forwardRef((props:PropsWithChildren<CustomTextProps>,ref)=>{
     const  fontSize = RFValue(useContext(FontSizeProviderContext).fontSize)||18;
     return(
-        <Text style={[{fontSize:fontSize},style]} variant={variant}
-         numberOfLines={numberOfLine} className={className}
-         {...otherProps}
-          >{children}</Text>
+        <View ref={ref as LegacyRef<View>}>
+            <Text style={[{ fontSize: fontSize }, props.style]} variant={props.variant}
+                numberOfLines={props.numberOfLine} className={props.className}
+                {...props}>{props.children}</Text>
+</View >
     )
-}
+})
+export default CustomText;

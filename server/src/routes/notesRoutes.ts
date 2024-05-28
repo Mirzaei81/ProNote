@@ -91,6 +91,7 @@ NoteRoute.post('/', async (req, res) => {
             req.conn.release()
             return
         }
+        console.log(id+"at noteRoute:94")
         const [data] = await req.conn.execute(
             'INSERT INTO text_table(`tags`, `title`, `body`,`user_id`) VALUES (?, ?, ?,?);'
             , [tags, title, body, id]
@@ -114,6 +115,7 @@ NoteRoute.get('/', async (req, res) => {
     }
     try {
         const id = req.user;
+        console.log(id)
         const nullKeys: string[] = findNullKeysRecursive({ id: id })
         if (nullKeys.length !== 0) {
             res.status(400).json({ error: `${nullKeys} Can't be null` })
@@ -134,7 +136,7 @@ NoteRoute.get('/', async (req, res) => {
         req.conn.release()
     }
 });
-NoteRoute.get('/note/:id', async (req: Request, res) => {
+NoteRoute.get('/:id', async (req: Request, res) => {
     if (!req.conn) {
         res.status(500).send({
             error: "Couldn't create Database"
@@ -154,6 +156,7 @@ NoteRoute.get('/note/:id', async (req: Request, res) => {
             'SELECT * FROM text_table WHERE `user_id` = ? and `title` = ? ;'
             , [Userid!.id, id]
         )
+        console.log(data)
         res.json({ message: 'Succesfull', data: data });
         req.conn.release()
         return;

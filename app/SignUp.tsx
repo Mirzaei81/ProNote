@@ -2,15 +2,15 @@ import { useSession } from "@/hooks/useSession";
 import {Image} from "expo-image"
 import { useContext, useState } from "react";
 import { ThemedView } from '@/components/ThemedView';
-import { Button, HelperText, Snackbar, TextInput } from "react-native-paper";
-import { StyleSheet } from "react-native";
+import { ActivityIndicator, Button, HelperText, Snackbar, TextInput } from "react-native-paper";
+import { StyleSheet, View } from "react-native";
 import { useAssets } from "expo-asset";
 import { Link, router } from "expo-router";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import CustomText from "@/components/Text";
 import { FontSizeProviderContext } from "@/hooks/materialThemeProvider";
 
-export default function Login() {
+export default function Page() {
   const  fontSize = useContext(FontSizeProviderContext).fontSize;
 
   const [visible,setVisible] = useState(false)
@@ -27,13 +27,20 @@ export default function Login() {
   const [password,setPassword] = useState("")       //Forms
   const [Checkpassword,setCheckPassword] = useState("")
 
+  const [loading,setLoading] = useState(false)
+
   const handleSignIn =async ()=>  {
-      const res =await signIn(username,password,email)
+    setLoading(true)
+    const res = await signIn(username, password, email)
+    console.log(res)
       if(res!.hasOwnProperty("error")){
         setError(res?.error!)
         setVisible(true)
       }
-      router.replace("/")
+      else {
+        router.replace("/")
+      }
+      setLoading(false)
   }
   const passCheck=()=>{
     if(Checkpassword.length===0){
@@ -65,9 +72,7 @@ export default function Login() {
           right={<TextInput.Icon icon="email" />}
         />
       <HelperText type="error" style={{color:"red"}} visible={hasErrors()}>
-        <CustomText style={{ color: colorError }}>
           Email address is invalid!
-        </CustomText>
       </HelperText>
 
         <TextInput
@@ -89,16 +94,20 @@ export default function Login() {
           right={<TextInput.Icon icon="key" />}
         />
       <HelperText type="error" visible={passCheck()}>
-        <CustomText style={{color:colorError}}>
       password and Confirmation don't match 
-      </CustomText>
       </HelperText>
         <Button
           mode="contained-tonal" 
-          className="mt-4 text-center flex justify-center"
+          className="mt-4 z-30  flex"
           contentStyle={style.button}
           onPress={handleSignIn}
-        ><CustomText>SignUp</CustomText></Button>
+        >
+        {loading? (
+          <View className="flex flex-1 items-center justify-center content-center">
+            <ActivityIndicator style={style.activity}  size={40} />
+          </View>
+      ) :<CustomText>SignUp</CustomText> 
+      }</Button>
         <Link  href="/Login" asChild><CustomText>Already have an account ?</CustomText></Link>
       <Snackbar style={{backgroundColor:colorError}}  duration={5000} onDismiss={() => setVisible(false)} visible={visible}>
         <CustomText style={{color:onError}}>
@@ -116,6 +125,9 @@ const style = StyleSheet.create({
   image:{
     width : 160,
     height: 160
+  },
+  activity:{
+    alignItems:"center",
+    verticalAlign:"middle"
   }
-
 })
