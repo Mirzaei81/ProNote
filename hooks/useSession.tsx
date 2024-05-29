@@ -6,44 +6,52 @@ if (!Constants?.expoConfig?.hostUri) throw "Couldnot get the host uri"
 const address = Constants.expoConfig.hostUri.split(`:`).shift()
 const port= process.env.EXPO_PUBLIC_PORT 
 const uri = `http://${address}:${port}`
+const timeout = process.env.EXPO_PUBLIC_TIMEOUT||3000
 const logIn= async (username:string,password:string):Promise<{message?:string,error?:string}>=>{
   try{
-    const data = await fetch(uri+'/user/login',{
-      method:'POST',
+    const controller = new AbortController();
+    const id = setTimeout(() => controller.abort(), Number(timeout));
+
+    const data = await fetch(uri + '/user/login', {
+      method: 'POST',
+      signal:controller.signal,
       headers: {
         'Content-Type': 'application/json' // Set the Content-Type header
       },
       body: JSON.stringify({ username: username.trim(), password: password.trim() }),
     })
-    let  res:Login=  await data.json()
-    console.log(res)
-    if(data.status===401){
-      return {"error":res.error}
+    clearTimeout(id)
+    let res: Login = await data.json()
+    if (data.status === 401) {
+      return { "error": res.error }
     }
-    return  {"message":res.Token}
+    return { "message": res.Token }
   }catch (e){
     console.log(e)
-      return {"error":"An Unknown error Happend"}
+      return {"error":"Could not connect to server please Restart the server"}
   }
 }
 const signIn = async (username:string,password:string,email:string):Promise<{message?:string,error?:string}>=>{
   try{
-    console.log(address,port,uri)
+    const controller = new AbortController();
+    const id = setTimeout(() => controller.abort(), Number(timeout));
+
     const data = await fetch(uri+'/user/register',{
       method:'POST',
+      signal: controller.signal,
       headers: {
         'Content-Type': 'application/json' // Set the Content-Type header
       },
       body:JSON.stringify({username: username, password: password,email:email }),
     })
+    clearTimeout(id)
     let  res:register=  await data.json()
     if(data.status===409){
       return {"error":res.error}
     }
     return  {"message":res.Token}
   }catch (e){
-    console.error(e)
-      return {"error":"An Unknown error Happend" }
+      return {"error":"Could not connect to server please Restart the server" }
   }
 }
 type AuthContextProps={

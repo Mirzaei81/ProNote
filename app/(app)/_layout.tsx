@@ -6,7 +6,6 @@ import { useContext, useEffect } from "react";
 import { FontSizeProviderContext, useMaterial3ThemeContext } from "@/hooks/materialThemeProvider";
 import { useStorageState } from "@/hooks/useStorageState";
 import { useColorScheme } from "react-native";
-import { colorScheme } from "simpler-color";
 
 export default function RootLayout() {
   const fontCtx = useContext(FontSizeProviderContext);

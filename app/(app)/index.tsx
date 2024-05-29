@@ -169,7 +169,7 @@ export default function HomeScreen() {
             {
               icon: 'note-plus',
               label: 'Create Note',
-              onPress: () =>{setFabVisible(false,()=>router.push("/create"))},
+              onPress: () =>router.push("/create"),
             },
             {
               icon: 'information-outline',
