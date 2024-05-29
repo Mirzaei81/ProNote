@@ -60,7 +60,7 @@ try{
   await setupDatabase(await conn.getConnection())
 }
 catch(e){
-  throw e
+  throw {error:"Failed To create Pool to DB Please Check you're username and password"}
 }
 export const getConnection = async(req:Request, res:Response, next:NextFunction)=>{
       // Use the connection pool to get a connection

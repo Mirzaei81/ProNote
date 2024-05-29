@@ -18,7 +18,6 @@ UserRouter.post('/register', async (req:Request, res:Response) => {
   try {
     const { username, email, password } = req.body;
     //checking the userName and Emaill Exist for duplicaiton
-    console.log(username,email,password)
     const [count] = await req.conn.query<CountResult[]>(
       'SELECT COUNT(*) FROM user_table WHERE username = ? AND email= ?',
       [username, email],
@@ -31,7 +30,6 @@ UserRouter.post('/register', async (req:Request, res:Response) => {
       req.conn.release()
       return
     }
-    console.log(username,email,password)
     const passHashed = await encryptPass(password)
     //register the user 
     const sql = 'INSERT INTO user_table (`username`, `email`, `password`) VALUES (?, ?, ?);'
@@ -76,7 +74,7 @@ UserRouter.post('/login', async (req, res) => {
       res.status(401).json({ error: 'Password is Incorrect' });
     }
   } catch (error) {
-    console.log(error)
+    console.error(error)
     res.status(500).json({ message: 'Internal server error',error:error });
   }
   finally{

@@ -21,7 +21,6 @@ NoteRoute.put('/:id', async (req, res) => {
             req.conn.release()
             return;
         }
-        console.log(id,title,body,userId ,"notesRoutes:24")
         const [data, fields] = await req.conn.execute(
             'UPDATE text_table SET body = ? , title = ? where id= ? and user_id = ?  ;'
             , [body,title,id,userId]
@@ -30,7 +29,7 @@ NoteRoute.put('/:id', async (req, res) => {
         req.conn.release()
         return;
     } catch (error) {
-        console.log(error)
+        console.error(error)
         res.status(500).json({ error: 'Internal server error' });
     }
     finally {
@@ -93,7 +92,6 @@ NoteRoute.post('/', async (req, res) => {
             req.conn.release()
             return
         }
-        console.log(id+"at noteRoute:94")
         const [data] = await req.conn.execute(
             'INSERT INTO text_table(`title`, `body`,`user_id`) VALUES (?, ?,?);'
             , [ title, body, id]
@@ -117,7 +115,6 @@ NoteRoute.get('/', async (req, res) => {
     }
     try {
         const id = req.user;
-        console.log(id)
         const nullKeys: string[] = findNullKeysRecursive({ id: id })
         if (nullKeys.length !== 0) {
             res.status(400).json({ error: `${nullKeys} Can't be null` })
@@ -154,12 +151,10 @@ NoteRoute.get('/:id', async (req: Request, res) => {
             req.conn.release()
             return;
         }
-        console.log(Userid!.id,id,"NoteRoute:158")
         const [data, fields] = await req.conn.execute(
             'SELECT * FROM text_table WHERE `user_id` = ? and `title` = ? ;'
             , [Userid!.id, id]
         )
-        console.log(data,"NoteRoute:162")
         res.json({ message: 'Succesfull', data: data });
         req.conn.release()
         return;

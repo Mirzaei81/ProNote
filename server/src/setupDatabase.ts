@@ -21,7 +21,7 @@ export const setupDatabase =async (conn:PoolConnection)=>{
         );
     }
     catch(e) {
-        console.log(e)
+        console.error(e)
         throw { "error": "Couldn't Connect Create text_table" }
     }
     try {
@@ -48,7 +48,7 @@ export const setupDatabase =async (conn:PoolConnection)=>{
             await conn.execute(`
         ALTER TABLE text_table
         ADD CONSTRAINT  fk_user_id
-        FOREIGN KEY   IF NOT EXISTS (user_id)
+        FOREIGN KEY (user_id)
         REFERENCES user_table(id);`)
         }
     }

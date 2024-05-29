@@ -2,60 +2,43 @@ openapi: 3.0.0
 info:
   title: Note API
   version: 1.0.0
+tags:
+  - name: Note Route
+    description: "Get/Post/Put/Delete Notes"
+  - name: User Route
+    description: "Register/Login User"
+
 paths:
-  /notes/{id}:
-    get:
-      summary: Returns a specific note by ID
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: integer
-      responses:
-        '200':
-          description: The requested note
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Note'
-    put:
-      summary: Updates a specific note by ID
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: integer
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Note'
-      responses:
-        '200':
-          description: The updated note
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Note'
-  /notes:
+  /note/:
     get:
       summary: Returns a list of notes
+      security:
+        - bearerAuth: []
+      tags: 
+       - Note Route
       responses:
         '200':
-          description: An array of notes
+          description: 'Return array of notes'       
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Note'
         '500':
           description: Error in Database Creation
         '400':
-          description: Token is invalid; shouldn't even be called
+          description: Token is invalid; somthing wrong hapend here
+          
     post:
       summary: Creates a new note
+      tags: 
+       - Note Route
+      security:
+        - bearerAuth: []
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Note'
+              $ref: '#/components/schemas/PostNote'
       responses:
         '200':
           description: The newly created note
@@ -63,46 +46,164 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Note'
-                paths:
-  /user:
-    /register:
-      post:
-        tags:
-          - Register
-        summary: Register a new user
-        requestBody:
+                
+  /note/{title}:
+    get:
+      summary: Returns a specific note by Title 
+      tags: 
+       - Note Route
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: title
           required: true
+          schema:
+            type: string
+          description: The Title of the note to fetch
+      responses:
+        '200':
+          description: The requested note
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
-        responses:
-          '200':
-            description: User registered successfully
-          '400':
-            description: Bad request
-          '409':
-            description: Duplicate username
-  /login:
+                $ref: '#/components/schemas/Note'
+
+    put:
+      summary: Updates a specific note by Title
+      tags: 
+       - Note Route
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: title
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateNote'
+      responses:
+        '200':
+          description: The updated note
+          content:
+            application/json:
+              example:
+                message: Succesfull
+        '500':
+          description: server
+          content:
+            application/json:
+              example:
+                error: Internal server error
+    delete:
+      summary: Delete a note by Title
+      security:
+        - bearerAuth: []
+      tags: 
+       - Note Route
+      parameters:
+        - in: path
+          name: title
+          required: true
+          schema:
+            type: string
+          description: The ID of the note to delete
+      responses:
+        '200':
+          description: Note deleted successfully
+          content:
+            application/json:
+              example:
+                message: Note deleted successfully
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              example:
+                error: Internal server error
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              example:
+                error: Unexpected error occurred
+  /user/register:
     post:
       tags:
-        - Login
-      summary: Log in 
+        - User Route
+      summary: Register a new user
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/User'
+              $ref: '#/components/schemas/UserRegister'
       responses:
         '200':
-          description: User registered successfully
+          description: Succesfull Register
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserLoginSuccess'
         '400':
           description: Bad request
         '409':
           description: Duplicate username
+  /user/login:
+    post:
+      tags:
+        - User Route
+      summary: Log in by Username Password 
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserLogin'
+      responses:
+        '200':
+          description: Succesfull login
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserLoginSuccess'
+        '400':
+          description: Bad request
+        '409':
+          description: Duplicate username
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              example:
+                error: Internal server error
 components:
+  securitySchemes:
+    bearerAuth:            
+      type: http
+      scheme: bearer
+      bearerFormat: JWT 
   schemas:
+    UpdateNote:
+      type: object
+      properties:
+
+        title:
+          type: string
+        body:
+          type: string
+    PostNote:
+      type: object
+      properties:
+
+        title:
+          type: string
+        body:
+          type: string
     Note:
       type: object
       properties:
@@ -113,15 +214,27 @@ components:
         body:
           type: string
         user_id:
-          type:
-    User:
+          type: integer
+    UserLogin:
       type: object
       properties:
-        id:
-         type: integer
+        username:
+          type: string
+        password:
+          type: string
+    UserRegister:
+      type: object
+      properties:
         username:
           type: string
         email: 
           type: string
         password:
+          type: string
+    UserLoginSuccess:
+      type: object
+      properties:
+        message:
+          type: string
+        Token:
           type: string

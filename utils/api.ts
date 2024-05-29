@@ -45,7 +45,6 @@ export const getNotesByTitle=  async (Token:string,title:string)=>{
     },
   })
     const data = await res.json()
-    console.log(JSON.stringify(data)+"api:42")
     return data
 }
     catch(error:any){
@@ -107,7 +106,6 @@ export const  postNote = async (Token:string,title:string,body:string) => {
   })
     .then((response) =>{clearTimeout(id); return response.json()})
     .then((data) => {
-      console.log(data)
       return {message: 'Succesfull'}
     })
     .catch((error) => {
