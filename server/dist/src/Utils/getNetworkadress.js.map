@@ -1,0 +1,1 @@
+{"version":3,"sources":["../../../src/Utils/getNetworkadress.ts"],"sourcesContent":["import {networkInterfaces}from \"os\";\r\n\r\nexport function getIPAddress() {\r\n    return '0.0.0.0';\r\n  }"],"names":["getIPAddress"],"rangeMappings":";;","mappings":"AAEA,OAAO,SAASA;IACZ,OAAO;AACT"}
