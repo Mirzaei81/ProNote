@@ -12,13 +12,12 @@ import { ThemedView } from "@/components/ThemedView";
 import { useAssets } from "expo-asset";
 import WebView from "react-native-webview";
 import { useWebViewStyle } from "@/constants/css";
-import { useThemeColor } from "@/hooks/useThemeColor";
 
 export default function Page(){
   const asset = useAssets([require("@/assets/images/logo.png")])
-
-  const errorColor = useThemeColor({},"error")
-  const PrimaryColor = useThemeColor({},"primary")
+  const theme = useTheme()
+  const errorColor = theme.colors.error
+  const PrimaryColor = theme.colors.onPrimary
 
   const [css,setCss] = useWebViewStyle()
   const navigation = useNavigation()
@@ -48,12 +47,18 @@ export default function Page(){
     )
     });
   }, [navigation,Notes]);
-    const RemoveNote =()=>{
-             deleteNote(id! as string ,session! ).then(() =>{router.replace("/")}).catch((e) => {
-                setError("An Error occourd while trying to connect ot server"+e.toString()),
-                setSnackBarVisible(true)
-            })
-            setShow(false), setLoading(false)
+    const RemoveNote =async ()=>{
+      try {
+        const res = await deleteNote(id! as string, session!)
+        router.replace("/")
+        console.log(res)
+        setShow(false) 
+        setLoading(false)
+      }
+      catch(e){
+        setError("An Error occourd while trying to connect to server")
+          setSnackBarVisible(true)
+      }
     }
     const handleCreate = ()=>{
       setLoading(true)

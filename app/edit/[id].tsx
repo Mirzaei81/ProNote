@@ -21,9 +21,10 @@ export default  function Page(){
     const { id,NoteId} = useLocalSearchParams();
     const { session } = useSession();
 
-    const colorError = useThemeColor({}, "error")
-    const onError = useThemeColor({}, "onError")
-    const onPrimary = useThemeColor({}, "onPrimary")
+    const theme = useTheme()
+    const onPrimary = theme.colors.onPrimary
+    const colorError= theme.colors.error
+    const onError =   theme.colors.onError
     const [SnackBarVisible, setSnackBarVisible] = useState(false)
     const [loading, setLoading] = useState(false)
     const [show, setShow] = useState(false)

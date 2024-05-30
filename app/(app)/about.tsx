@@ -6,11 +6,12 @@ import { useAssets } from "expo-asset";
 import { Image } from "expo-image";
 import { Link, router } from "expo-router";
 import { StatusBar, StyleSheet, View } from "react-native";
+import { useTheme } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Page () {
     const assets = useAssets([require("../../assets/images/logo.png")])
-    const onBackground =useThemeColor({},"onBackground")
+    const onBackground = useTheme().colors.background
     return (
       <ThemedView className="p-2 h-full flex items-center" style={styles.topBar} >
         <Link href="/" asChild><CustomText className="text-center m-10" variant="titleLarge">About us</CustomText></Link>

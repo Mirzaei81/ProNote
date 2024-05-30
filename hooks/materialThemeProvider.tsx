@@ -42,7 +42,7 @@ export function Material3ThemeProvider({
   const UpdateFontSize = (val: number) => {
     setFontSize(RFValue(val).toString())
   }
-  const fontSize = Number(FontSize)
+  const fontSize = Number(FontSize)||19
   const paperTheme =
     colorScheme === 'dark' ? { ...MD3DarkTheme, colors: theme.dark } : { ...MD3LightTheme, colors: theme.light };
 

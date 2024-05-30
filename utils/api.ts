@@ -33,7 +33,6 @@ export const getNotes=  async (Token:string)=>{
 export const getNotesByTitle=  async (Token:string,title:string)=>{
   // get allendpoint
   try{
-
     const controller = new AbortController();
     const id = setTimeout(() => controller.abort(), Number(timeout));
   const res = await fetch(uri+'/note/'+title.trim(), {
@@ -52,7 +51,6 @@ export const getNotesByTitle=  async (Token:string,title:string)=>{
     };
 }
 export const updateNote = async (id:string,title:string, body:string,Token:string) => {
-
     try {
     const controller = new AbortController();
     const timeoutid = setTimeout(() => controller.abort(), Number(timeout));
@@ -72,43 +70,46 @@ export const updateNote = async (id:string,title:string, body:string,Token:strin
     return {'error':"Timeout please check server"};
     }
   };
-export const deleteNote = async (id:string,Token:string) => {
+export const deleteNote = async (id: string, Token: string) => {
   //delete
-    const controller = new AbortController();
-    const Timeid = setTimeout(() => controller.abort(), Number(timeout));
-  const data = await fetch(uri+`/note/${id.trim()}`, {
-    method: 'DELETE',
-    signal: controller.signal,
-    headers: {
+  const controller = new AbortController();
+  const Timeid = setTimeout(() => controller.abort(), Number(timeout));
+  try {
+    const data = await fetch(uri + `/note/${id.trim()}`, {
+      method: 'DELETE',
+      signal: controller.signal,
+      headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${Token}`,
-    },
-  })
-  return await data.json()
-    .catch((error) => {
-    return {'error':"Timeout please check server"};
-    });
-} 
-export const  postNote = async (Token:string,title:string,body:string) => {
+      },
+    })
+    return await data.json()
+  }
+  catch (error) {
+    return error
+  };
+}
+export const postNote = async (Token: string, title: string, body: string) => {
   const controller = new AbortController();
   const id = setTimeout(() => controller.abort(), Number(timeout));
-  fetch(uri+'/note/', {
-    method: 'POST',
-    signal: controller.signal,
-    headers: {
+  try {
+    const data = await fetch(uri + '/note/', {
+      method: 'POST',
+      signal: controller.signal,
+      headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${Token}`,
-    },
-    body: JSON.stringify({
-      title: title.trim(),
-      body: body,
-    }),
-  })
-    .then((response) =>{clearTimeout(id); return response.json()})
-    .then((data) => {
-      return {message: 'Succesfull'}
+      },
+      body: JSON.stringify({
+        title: title.trim(),
+        body: body,
+      }),
     })
-    .catch((error) => {
-      return {'Error':"Timeout please check server"};
-    });
+    clearTimeout(id);
+    const res = await data.json()
+    return res
+  }
+  catch (e) {
+    return e;
+  };
 } 

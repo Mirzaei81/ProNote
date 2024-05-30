@@ -1,7 +1,6 @@
-import { useThemeColor } from "@/hooks/useThemeColor";
 import { StyleProp, StyleSheet, TextStyle } from "react-native";
 import { View } from "react-native";
-import { ActivityIndicator, Dialog,Button,Text } from "react-native-paper";
+import { ActivityIndicator, Dialog,Button,Text, useTheme } from "react-native-paper";
 
 export interface IValidationComponent{
     setShow:(value: React.SetStateAction<boolean>) => void,
@@ -9,11 +8,10 @@ export interface IValidationComponent{
     show:boolean,
     handler:()=>void
 }
-const primary = useThemeColor({}, "error")
-const onPrimary = useThemeColor({}, "onPrimary")
-const ClosetButtonStyle: StyleProp<TextStyle> = {backgroundColor: primary,width:125 }
-const SaveButtonStyle: StyleProp<TextStyle> = { color: onPrimary,width:125 }
 export default function ValidationComponent({show,setShow,loading,handler}:IValidationComponent){
+    const theme = useTheme()
+    const ClosetButtonStyle: StyleProp<TextStyle> = { backgroundColor: theme.colors.error , width: 125 }
+    const SaveButtonStyle: StyleProp<TextStyle> = { backgroundColor:theme.colors.onPrimary, width: 125 }
     return(
         <Dialog visible={show} onDismiss={()=>setShow(false)}>
           <Dialog.Title>Save Changes</Dialog.Title>

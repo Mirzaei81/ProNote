@@ -30,10 +30,10 @@ import { StyleProp } from 'react-native';
 export default function HomeScreen() {
   const mainThem = useTheme()
   const fontSize = useContext(FontSizeProviderContext).fontSize
-
-  const colorError = useThemeColor({}, 'error');
-  const  onError = useThemeColor({}, 'onError');
-  const  surfaceColor = useThemeColor({}, "onBackground");
+  const theme = useTheme()
+  const colorError = theme.colors.error
+  const onError = theme.colors.onError
+  const  surfaceColor = theme.colors.onBackground
 
   const colorScheme  = useColorScheme()
   const ShimmerGrad = colorScheme =="dark"?darkLinear:lightLinear

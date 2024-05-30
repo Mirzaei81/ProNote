@@ -2,7 +2,7 @@ import { useCallback, useContext, useEffect, useLayoutEffect, useState } from 'r
 import { RichText, Toolbar } from "@10play/tentap-editor"
 import { KeyboardAvoidingView, Platform,  StyleProp,  TextStyle,  View, ViewStyle } from 'react-native';
 import {  useLocalSearchParams, useNavigation, useRouter } from 'expo-router';
-import {  Portal, Snackbar,  TextInput } from 'react-native-paper';
+import {  Portal, Snackbar,  TextInput, useTheme } from 'react-native-paper';
 import { AntDesign } from '@expo/vector-icons';
 import { postNote } from '@/utils/api';
 import { useSession } from '@/hooks/useSession';
@@ -17,9 +17,10 @@ export default function CreatePage({ navigation, route }:any){
     const nav = useNavigation()
     const param = useLocalSearchParams();
 
-    const colorError = useThemeColor({}, "error")
-    const onError = useThemeColor({}, "onError")
-    const onPrimary = useThemeColor({}, "onPrimary")
+    const theme = useTheme()
+    const colorError =theme.colors.error
+    const onError =   theme.colors.onError
+    const onPrimary = theme.colors.onPrimary
     const {session} = useSession()
     const router = useRouter()
 
@@ -53,14 +54,23 @@ export default function CreatePage({ navigation, route }:any){
             setShow(false)
         }
         else {
-            postNote(session!, title.trim(), body).then(() => router.replace("/")).catch((e) => {
+            try{
+                const res = await postNote(session!, title.trim(), body)
+                if(Object.hasOwn(res,"code")){
+                    setError(res.message)
+                    setSnackBarVisible(true)
+                }else{
+                    setShow(false)
+                    setLoading(false)
+                    router.replace("/")
+                }
+            }
+            catch(e){
+                console.log(e)
                 setError("An Error occourd while trying to connect ot server"),
                 setSnackBarVisible(true)
-            })
-            setShow(false)
-            setLoading(false)
+            }
         }
-
     }
     useLayoutEffect(()=>{
         nav.setOptions({
