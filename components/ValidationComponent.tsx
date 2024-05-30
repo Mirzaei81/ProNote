@@ -1,6 +1,7 @@
-import { StyleSheet } from "react-native";
+import { useThemeColor } from "@/hooks/useThemeColor";
+import { StyleProp, StyleSheet, TextStyle } from "react-native";
 import { View } from "react-native";
-import { ActivityIndicator, Dialog, useTheme,Button,Text } from "react-native-paper";
+import { ActivityIndicator, Dialog,Button,Text } from "react-native-paper";
 
 export interface IValidationComponent{
     setShow:(value: React.SetStateAction<boolean>) => void,
@@ -8,16 +9,19 @@ export interface IValidationComponent{
     show:boolean,
     handler:()=>void
 }
+const primary = useThemeColor({}, "error")
+const onPrimary = useThemeColor({}, "primary")
+const ClosetButtonStyle: StyleProp<TextStyle> = {backgroundColor: primary,width:125 }
+const HomeButtonStyle: StyleProp<TextStyle> = { color: onPrimary,width:125 }
 export default function ValidationComponent({show,setShow,loading,handler}:IValidationComponent){
-    const theme  =  useTheme()
     return(
         <Dialog visible={show} onDismiss={()=>setShow(false)}>
           <Dialog.Title>Save Changes</Dialog.Title>
           <Dialog.Content>
                         <View className='flex content-center flex-row justify-around '>{loading ? <ActivityIndicator /> : (
                     <View style={styles.item}>
-                        <Button onPress={() => setShow(false)} style={{ backgroundColor: theme.colors.error, width: 125 }}><Text>Close</Text></Button>
-                        <Button onPress={handler} style={{ backgroundColor: theme.colors.primary, width: 125 }}><Text >Save</Text></Button>
+                        <Button onPress={() => setShow(false)} style={ClosetButtonStyle}><Text>Close</Text></Button>
+                        <Button onPress={handler} style={HomeButtonStyle}><Text >Save</Text></Button>
                             </View>
                         )}
                 </View>

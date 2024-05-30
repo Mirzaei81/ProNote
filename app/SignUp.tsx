@@ -3,12 +3,13 @@ import {Image} from "expo-image"
 import { useContext, useState } from "react";
 import { ThemedView } from '@/components/ThemedView';
 import { ActivityIndicator, Button, HelperText, Snackbar, TextInput } from "react-native-paper";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, TextStyle, View, ViewStyle } from "react-native";
 import { useAssets } from "expo-asset";
 import { Link, router } from "expo-router";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import CustomText from "@/components/Text";
 import { FontSizeProviderContext } from "@/hooks/materialThemeProvider";
+import { StyleProp } from "react-native";
 
 export default function Page() {
   const  fontSize = useContext(FontSizeProviderContext).fontSize;
@@ -51,13 +52,17 @@ export default function Page() {
   const hasErrors = ()=>{
     return (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email) && email.length!==0)
   }
+  const fontSizeStyle:StyleProp<TextStyle> = {fontSize:fontSize};
+  const SnackBarStyle:StyleProp<ViewStyle> = {backgroundColor:colorError}
+  const HelperStyle:StyleProp<TextStyle> = {color:colorError}
+  const SnackBarTextStyle:StyleProp<TextStyle> = {color:onError}
   return (
       <ThemedView className="h-full flex items-center justify-center" >
       {/*@ts-expect-error */}
         <Image contentFit="cover" style={style.image} className="text-white" source={assets[0]}   alt="proNote"/>
         <TextInput
           value={username}
-          style={{fontSize:fontSize}}
+          style={fontSizeStyle}
           className="w-4/5 m-2"
           onChangeText={(username) => setUserName( username )}
           label={'Username'}
@@ -66,12 +71,12 @@ export default function Page() {
         <TextInput
           value={email}
           className="w-4/5 m-2"
-          style={{fontSize:fontSize}}
+          style={fontSizeStyle}
           onChangeText={(username) => setEmail( username )}
           label={'Email'}
           right={<TextInput.Icon icon="email" />}
         />
-      <HelperText type="error" style={{color:"red"}} visible={hasErrors()}>
+      <HelperText type="error" style={HelperStyle} visible={hasErrors()}>
           Email address is invalid!
       </HelperText>
 
@@ -80,13 +85,13 @@ export default function Page() {
           className="w-4/5"
           onChangeText={(password) => setPassword( password )}
           label="Password"
-          style={{fontSize:fontSize}}
+          style={fontSizeStyle}
           secureTextEntry={true}
           right={<TextInput.Icon icon="key" />}
         />
         <TextInput
           value={Checkpassword}
-          style={{fontSize:fontSize}}
+          style={fontSizeStyle}
           className="w-4/5"
           onChangeText={(password) => setCheckPassword(password)}
           label={'Password Confirmation'}
@@ -109,8 +114,8 @@ export default function Page() {
       ) :<CustomText>SignUp</CustomText> 
       }</Button>
         <Link  href="/Login" asChild><CustomText>Already have an account ?</CustomText></Link>
-      <Snackbar style={{backgroundColor:colorError}}  duration={5000} onDismiss={() => setVisible(false)} visible={visible}>
-        <CustomText style={{color:onError}}>
+      <Snackbar style={SnackBarStyle}  duration={5000} onDismiss={() => setVisible(false)} visible={visible}>
+        <CustomText style={SnackBarTextStyle}>
           {error}
           </CustomText>
       </Snackbar>

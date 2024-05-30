@@ -6,8 +6,6 @@ import { FontSizeProviderContext, useMaterial3ThemeContext } from '@/hooks/mater
 import { Flex } from './Flex';
 import { useStorageState } from '@/hooks/useStorageState';
 import CustomText from './Text';
-import { LinearGradient } from 'expo-linear-gradient';
-import { TouchableOpacity } from 'react-native-gesture-handler';
 import { useContext } from 'react';
 import {Themedcolors as colors} from "@/constants/Colors"
 
@@ -16,14 +14,12 @@ export function ThemeEditor() {
   const { updateTheme, resetTheme } = useMaterial3ThemeContext();
   const {fontSize,UpdateFontSize}  = useContext(FontSizeProviderContext)
 
-  const [[loadingTheme,useDefaultTheme], setUseDefaultTheme] =useStorageState('useDefaultTheme');
   const [[LoadingSourceColor,sourceColor], setSourceColor] = useStorageState('sourceColor');
 
   const handleUseDefaultThemeChange = (value: boolean) => {
     if (value) {
       resetTheme();
     }
-    setUseDefaultTheme(value.toString());
   };
 
   const handleSourceColorChange = (color: string) => {
@@ -32,14 +28,7 @@ export function ThemeEditor() {
   };
 
   return (
-    <Flex style={{ paddingTop: 20 }}>
-      {isDynamicThemeSupported && (
-        <Flex direction="row" justify="space-between">
-          <Text>Use default theme</Text>
-          <Switch value={JSON.parse(useDefaultTheme!) !== false} onValueChange={handleUseDefaultThemeChange} />
-        </Flex>
-      )}
-
+    <Flex style={styles.main}>
       <Flex direction='row' justify='center' wrap='wrap'>
         <CustomText>Select source FontSize</CustomText>
         <Flex direction='row' justify='space-around'>
@@ -63,19 +52,13 @@ export function ThemeEditor() {
                 onPress={() => handleSourceColorChange(color)}
                 borderless
                 rippleColor="rgba(0, 0, 0, .32)"
-                disabled={JSON.parse(useDefaultTheme!)}
                 key={color}
               >
                 <Flex
                   backgroundColor={color}
                   justify="center"
                   align="center"
-                  style={{
-                    height: 50,
-                    width: 50,
-                    borderRadius: 50,
-                    opacity: useDefaultTheme ? 0.5 : 1,
-                  }}
+                  style={styles.ColorPickerStyle}
                 >
                   {sourceColor && [light, dark].includes(sourceColor) && (
                     <IconButton icon="check" iconColor="#000" size={20} />
@@ -99,6 +82,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  ColorPickerStyle:{
+    height: 50,
+    width: 50,
+    borderRadius: 50,
+    opacity: 0.5 ,
+  },
   ripple: {
     position: 'absolute',
     top: 0,
@@ -110,4 +99,7 @@ const styles = StyleSheet.create({
   buttonContent: {
     position: 'relative',
   },
+  main: {
+    paddingTop: 20
+  }
 });

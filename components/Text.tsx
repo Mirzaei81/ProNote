@@ -13,9 +13,10 @@ interface CustomTextProps{
 }
 const  CustomText= React.forwardRef((props:PropsWithChildren<CustomTextProps>,ref)=>{
     const  fontSize = RFValue(useContext(FontSizeProviderContext).fontSize)||18;
+    const fontSizeStyle = { fontSize: fontSize }
     return(
         <View ref={ref as LegacyRef<View>}>
-            <Text style={[{ fontSize: fontSize }, props.style]} variant={props.variant}
+            <Text style={[fontSizeStyle, props.style]} variant={props.variant}
                 numberOfLines={props.numberOfLine} className={props.className}
                 {...props}>{props.children}</Text>
 </View >

@@ -1,5 +1,5 @@
 import { PropsWithChildren } from 'react';
-import { View, ViewStyle } from 'react-native';
+import { StyleProp, View, ViewStyle } from 'react-native';
 
 interface FlexProps {
   direction?: 'row' | 'column';
@@ -27,10 +27,7 @@ export function Flex({
   style,
   ...otherProps
 }: PropsWithChildren<FlexProps>) {
-  return (
-
-    <View
-      style={{ 
+  const flexStyle:StyleProp<ViewStyle>={ 
         display: 'flex',
         flexDirection: direction,
         alignItems: align,
@@ -39,8 +36,12 @@ export function Flex({
         paddingHorizontal: paddingX,
         paddingVertical: paddingY,
         ...style,
-        ...otherProps,
-      }}
+        ...otherProps as ViewStyle,
+      } 
+  return (
+
+    <View
+      style={flexStyle}
     >
       {children}
     </View>

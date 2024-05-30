@@ -1,4 +1,4 @@
-import {   StyleSheet, useColorScheme } from 'react-native';
+import {   StyleSheet, TextStyle, useColorScheme, ViewStyle } from 'react-native';
 import React, { useContext, useEffect, useState } from 'react';
 import {
   SafeAreaView,
@@ -25,6 +25,7 @@ import { useThemeColor } from '@/hooks/useThemeColor';
 import CustomText from '@/components/Text';
 import { FontSizeProviderContext } from '@/hooks/materialThemeProvider';
 import { FontAwesome } from '@expo/vector-icons';
+import { StyleProp } from 'react-native';
 
 export default function HomeScreen() {
   const mainThem = useTheme()
@@ -118,16 +119,22 @@ export default function HomeScreen() {
       </ThemedView>
     )
   }
+
+  const fontSizeStyle:StyleProp<TextStyle> = {fontSize:fontSize};
+  const SnackBarStyle:StyleProp<ViewStyle> = {backgroundColor:colorError}
+  const HelperStyle:StyleProp<TextStyle> = {color:colorError}
+  const SnackBarTextStyle:StyleProp<TextStyle> = {color:onError}
+  const containrtStyle = { gap: 10 }
   return (
     <ThemedView style={styles.TopBar} className="h-full flex flex-col justify-center px-10" >
       <View className='flex flex-row mt-5'>
-        <FontAwesome style={{alignSelf:"center",marginRight:10}} name='sign-out' size={24} color={surfaceColor} onPress={() => {
+        <FontAwesome style={styles.SignOutIcon} name='sign-out' size={24} color={surfaceColor} onPress={() => {
            router.push("/signOut");console.log("routing") }} />
         <Searchbar
           placeholder='Search'
           className='my-2 grow'
           onChangeText={onChangeSearch}
-          style={{fontSize:fontSize}}
+          style={fontSizeStyle}
           placeholderTextColor={surfaceColor}
           value={searchQuery}
         />
@@ -136,12 +143,12 @@ export default function HomeScreen() {
         {(!filtredData || filtredData.length === 0) ? (<View className='flex text-center align-center mt-40  justify-center'>
           {/*@ts-expect-error */}
           <Image contentFit="cover" style={styles.image} source={assets[0]} alt='Create First' />
-              <Link href="/create" style={{fontSize:fontSize}} asChild>
+              <Link href="/create" style={fontSizeStyle} asChild>
               <CustomText className='text-center'>Create New Note +</CustomText>
              </Link>
         </View>) :
           <FlatList
-            contentContainerStyle={{ gap: 10 }}
+            contentContainerStyle={containrtStyle}
             className='mb-20'
             showsVerticalScrollIndicator={false}
             data={filtredData}
@@ -179,8 +186,8 @@ export default function HomeScreen() {
           ]}
           onStateChange={onStateChange}
         />
-        <Snackbar style={{ backgroundColor: colorError }} duration={5000} onDismiss={() => setVisible(false)} visible={visible}>
-          <CustomText style={{color:onError}}>{error}</CustomText>
+        <Snackbar style={SnackBarStyle} duration={5000} onDismiss={() => setVisible(false)} visible={visible}>
+          <CustomText style={SnackBarTextStyle}>{error}</CustomText>
         </Snackbar>
       </Portal>
     </ThemedView>
@@ -210,5 +217,9 @@ const styles = StyleSheet.create({
     width: "100%",
     height: 80,
     borderRadius: 6
+  },
+  SignOutIcon: {
+    alignSelf: "center",
+    marginRight: 10
   }
 });

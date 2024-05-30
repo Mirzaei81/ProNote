@@ -1,6 +1,6 @@
 import { useCallback, useContext, useEffect, useState } from 'react';
 import { CodeBridge, RichText, TenTapStartKit, Toolbar, useEditorBridge } from "@10play/tentap-editor"
-import { KeyboardAvoidingView, Platform, View } from 'react-native';
+import { KeyboardAvoidingView, Platform, StyleProp, TextStyle, View, ViewStyle } from 'react-native';
 import { Stack, useLocalSearchParams, useNavigation, useRouter } from 'expo-router';
 import { Button, Dialog, Portal, Snackbar, TextInput, useTheme } from 'react-native-paper';
 import { AntDesign } from '@expo/vector-icons';
@@ -12,13 +12,18 @@ import { ThemedView } from '@/components/ThemedView';
 import ValidationComponent from '@/components/ValidationComponent';
 import { FontSizeProviderContext } from '@/hooks/materialThemeProvider';
 import { editorConfig } from '@/utils/editorConfig';
+import CustomText from '@/components/Text';
+import { StyleSheet } from 'react-native';
+import { useThemeColor } from '@/hooks/useThemeColor';
 
 export default  function Page(){
     const fontSize = useContext(FontSizeProviderContext).fontSize;
     const { id,NoteId} = useLocalSearchParams();
     const { session } = useSession();
-    const theme = useTheme()
 
+    const colorError = useThemeColor({}, "error")
+    const onError = useThemeColor({}, "onError")
+    const onPrimary = useThemeColor({}, "onPrimary")
     const [SnackBarVisible, setSnackBarVisible] = useState(false)
     const [loading, setLoading] = useState(false)
     const [show, setShow] = useState(false)
@@ -36,7 +41,7 @@ export default  function Page(){
     useEffect(() => {
         setTitle(id as string) 
     },[id])
-    const editor = editorConfig(theme,Notes?Notes.data[0].body:"")
+    const editor = editorConfig(Notes?Notes.data[0].body:"")
 
     const handleUpdate = async () => {
         setLoading(true)
@@ -54,14 +59,17 @@ export default  function Page(){
             setLoading(false)
         }
     }
+    const fontSizeStyle: StyleProp<Pick<TextStyle, "fontSize" | "fontFamily" | "fontWeight">> = { fontSize: fontSize };
+    const SnackBarStyle: StyleProp<ViewStyle> = { backgroundColor: colorError }
+    const SnackBarTextStyle: StyleProp<TextStyle> = { color: onError }
     return (
         <>
         <Stack.Screen options={{
-            headerTitleStyle:{fontSize:fontSize},
+            headerTitleStyle:fontSizeStyle,
             headerShown:true,
             headerTitle:title,
-            headerLeft:()=>(<AntDesign name="arrowleft" size={fontSize} color={theme.colors.onPrimary} onPress={()=>router.back()}/>),
-            headerRight:()=>(<AntDesign name="sync" size={32} color={theme.colors.onPrimary}  onPress={()=>setShow(true)} />)
+            headerLeft:()=>(<AntDesign name="arrowleft" size={fontSize} color={onPrimary} onPress={()=>router.back()}/>),
+            headerRight:()=>(<AntDesign name="sync" size={32} color={onPrimary}  onPress={()=>setShow(true)} />)
         }}/>
             <ThemedView className='h-full'>
                 <Portal>
@@ -72,18 +80,23 @@ export default  function Page(){
                 <RichText editor={editor} />
                 <KeyboardAvoidingView
                     behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-                    style={{
-                        position: 'absolute',
-                        width: '100%',
-                        bottom: 0,
-                    }}
+                    style={styles.KeyBoardStyle}
                 >
                     <Toolbar editor={editor} />
                 </KeyboardAvoidingView>
-                <Snackbar style={{ backgroundColor: theme.colors.error }} duration={5000} onDismiss={() => setSnackBarVisible(false)} visible={SnackBarVisible}>
-                    {error}
+                <Snackbar style={SnackBarStyle} duration={5000} onDismiss={() => setSnackBarVisible(false)} visible={SnackBarVisible}>
+                    <CustomText style={SnackBarTextStyle}>
+                        {error}
+                    </CustomText>
                 </Snackbar>
             </ThemedView>
         </>
     );
 };
+const styles = StyleSheet.create({
+    KeyBoardStyle: {
+        position: 'absolute',
+        width: '100%',
+        bottom: 0,
+    }
+})

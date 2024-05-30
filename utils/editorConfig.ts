@@ -1,7 +1,8 @@
 import { CodeBridge, PlaceholderBridge, TenTapStartKit, useEditorBridge } from "@10play/tentap-editor";
-import { MD3Theme } from "react-native-paper";
+import { MD3Theme, useTheme } from "react-native-paper";
 
-export function editorConfig(theme:MD3Theme,initialMessage:string){
+export function editorConfig(initialMessage:string){
+    const theme = useTheme()
     const customCodeBlockCSS = `
         * {
             background-color #ffdede;

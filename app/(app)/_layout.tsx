@@ -29,8 +29,10 @@ export default function RootLayout() {
   if(!session){
     return <Redirect href="/Login"/>
   }
+  const headerTitleStyle={ fontSize: fontCtx.fontSize }
+  const headerStyle={ backgroundColor: theme[ColorScheme!].primary, }
   return (
-    <Stack screenOptions={{ headerTitleStyle: { fontSize: fontCtx.fontSize }, headerStyle: { backgroundColor: theme[ColorScheme!].primary, } }}>
+    <Stack screenOptions={{ headerTitleStyle: headerTitleStyle, headerStyle:headerStyle  }}>
       <Stack.Screen name='index' options={{ headerShown: false }} />
       <Stack.Screen name='create' options={{  headerTransparent: false }} />
       <Stack.Screen name='about' options={{ headerShown:false}} />

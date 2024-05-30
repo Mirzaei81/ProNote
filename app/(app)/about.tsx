@@ -4,7 +4,6 @@ import { useAssets } from "expo-asset";
 import { Image } from "expo-image";
 import { Link } from "expo-router";
 import { StatusBar, StyleSheet, View } from "react-native";
-import { Text } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Page () {

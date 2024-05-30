@@ -1,8 +1,8 @@
 import { useCallback, useContext, useEffect, useLayoutEffect, useState } from 'react';
-import { CodeBridge, RichText, TenTapStartKit, Toolbar, useEditorBridge } from "@10play/tentap-editor"
-import { KeyboardAvoidingView, Platform,  View } from 'react-native';
+import { RichText, Toolbar } from "@10play/tentap-editor"
+import { KeyboardAvoidingView, Platform,  StyleProp,  TextStyle,  View, ViewStyle } from 'react-native';
 import {  useLocalSearchParams, useNavigation, useRouter } from 'expo-router';
-import {  Portal, Snackbar,  TextInput, useTheme } from 'react-native-paper';
+import {  Portal, Snackbar,  TextInput } from 'react-native-paper';
 import { AntDesign } from '@expo/vector-icons';
 import { postNote } from '@/utils/api';
 import { useSession } from '@/hooks/useSession';
@@ -11,12 +11,15 @@ import ValidationComponent from '@/components/ValidationComponent';
 import CustomText from '@/components/Text';
 import { FontSizeProviderContext } from '@/hooks/materialThemeProvider';
 import { editorConfig } from '@/utils/editorConfig';
+import { useThemeColor } from '@/hooks/useThemeColor';
 
-export default function CreateSCreen({ navigation, route }:any){
+export default function CreatePage({ navigation, route }:any){
     const nav = useNavigation()
     const param = useLocalSearchParams();
 
-    const theme = useTheme()
+    const colorError = useThemeColor({}, "error")
+    const onError = useThemeColor({}, "onError")
+    const primary = useThemeColor({}, "primary")
     const {session} = useSession()
     const router = useRouter()
 
@@ -28,13 +31,15 @@ export default function CreateSCreen({ navigation, route }:any){
     const [SnackBarVisible, setSnackBarVisible] = useState(false)
 
     const fontSize = useContext(FontSizeProviderContext).fontSize
-    const editor = editorConfig(theme,"")
+    const editor = editorConfig("")
+    const [RichTextKey,setRichTextKey]=useState(0) //Chaning it at first time to cause forcefully rerender 
     useEffect(()=>{
-        if(navigation){
-        navigation.setOptions({
-            title : param.id
-        })
+        if (navigation) {
+            navigation.setOptions({
+                title: param.id
+            })
         }
+        setRichTextKey(RichTextKey+1)
     },[navigation])
 
     const handleCreate = async ()=>{
@@ -59,7 +64,7 @@ export default function CreateSCreen({ navigation, route }:any){
     }
     useLayoutEffect(()=>{
         nav.setOptions({
-            headerRight:()=>(<AntDesign name="save" size={32} color={theme.colors.onPrimary}  onPress={()=>setShow(true)} />)
+            headerRight:()=>(<AntDesign name="save" size={32} color={primary}  onPress={()=>setShow(true)} />)
         })
     },[nav])
     
@@ -69,6 +74,10 @@ export default function CreateSCreen({ navigation, route }:any){
         })
         setTitle(e)
     },[])
+    const fontSizeStyle: StyleProp<TextStyle> = { fontSize: fontSize };
+    const SnackBarStyle: StyleProp<ViewStyle> = { backgroundColor: colorError }
+    const HelperStyle: StyleProp<TextStyle> = { color: colorError }
+    const SnackBarTextStyle: StyleProp<TextStyle> = { color: onError }
     return (
         <ThemedView>
             <View>
@@ -76,8 +85,8 @@ export default function CreateSCreen({ navigation, route }:any){
         <Portal>
             <ValidationComponent setShow={setShow} loading={loading} handler={handleCreate} show={show} />
       </Portal>
-            <TextInput label="Title" style={{fontSize:fontSize}}  mode='flat' value={title} onChangeText={titleChange} />
-            <RichText editor={editor} />
+            <TextInput label="Title" style={fontSizeStyle}  mode='flat' value={title} onChangeText={titleChange} />
+            <RichText key={RichTextKey} editor={editor} />
             <KeyboardAvoidingView
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                 style={{
@@ -88,8 +97,8 @@ export default function CreateSCreen({ navigation, route }:any){
             >
                 <Toolbar editor={editor} />
             </KeyboardAvoidingView>
-            <Snackbar style={{ backgroundColor: theme.colors.error }} duration={5000} onDismiss={() => setSnackBarVisible(false)} visible={SnackBarVisible}>
-                <CustomText style={{color:theme.colors.onError}}>{error}</CustomText>
+            <Snackbar style={SnackBarStyle} duration={5000} onDismiss={() => setSnackBarVisible(false)} visible={SnackBarVisible}>
+                <CustomText style={SnackBarTextStyle}>{error}</CustomText>
             </Snackbar>
         </ThemedView>
     );

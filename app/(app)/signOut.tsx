@@ -1,9 +1,11 @@
 import CustomText from "@/components/Text";
 import { ThemedView } from "@/components/ThemedView";
 import { useSession } from "@/hooks/useSession";
+import { useThemeColor } from "@/hooks/useThemeColor";
 import { useAssets } from "expo-asset";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
+import { StyleProp, TextStyle } from "react-native";
 import { View, StyleSheet } from "react-native";
 import { Button, useTheme } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -11,8 +13,11 @@ import { SafeAreaView } from "react-native-safe-area-context";
 export default function Page (){
     const assets = useAssets(require("@/assets/images/Signout.svg"))
     const {signOut} = useSession()
-    const theme = useTheme()
+    const primary = useThemeColor({},"primary")
+    const onPrimary = useThemeColor({},"onPrimary")
     const router = useRouter()
+  const SignoutButtonStyle:StyleProp<TextStyle> = {color:primary}
+  const HomeButtonStyle:StyleProp<TextStyle> = {color:onPrimary}
   return (
       <ThemedView className="h-full flex flex-col justify-center items-center px-10" >
           <SafeAreaView className="flex flex-col items-center">
@@ -20,8 +25,8 @@ export default function Page (){
               <Image contentFit="cover" style={styles.image} source={assets[0]} alt='Create First' />
               <CustomText className="text-center text-2xl">We Will miss you </CustomText>
               <View className="flex ">
-                  <Button style={styles.button} onPress={signOut} mode="contained"><CustomText style={{color:theme.colors.onPrimary}}>Sign Out</CustomText></Button>
-                  <Button style={styles.button} onPress={()=>router.replace('/')} mode="contained"><CustomText style={{color:theme.colors.onPrimary}}>Go Home </CustomText></Button>
+                  <Button style={styles.button} onPress={signOut} mode="contained"><CustomText style={SignoutButtonStyle}>Sign Out</CustomText></Button>
+                  <Button style={styles.button} onPress={()=>router.replace('/')} mode="contained"><CustomText style={HomeButtonStyle}>Go Home </CustomText></Button>
               </View>
           </SafeAreaView>
       </ThemedView>

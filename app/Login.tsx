@@ -2,8 +2,8 @@ import { useSession } from "@/hooks/useSession";
 import {Image} from "expo-image"
 import { useContext, useState } from "react";
 import { ThemedView } from '@/components/ThemedView';
-import { ActivityIndicator, Button, HelperText, Snackbar, Text, TextInput } from "react-native-paper";
-import { StyleSheet, View } from "react-native";
+import { ActivityIndicator, Button, HelperText, Props, Snackbar, SnackbarProps, Text, TextInput } from "react-native-paper";
+import { StyleProp, StyleSheet, TextStyle, View, ViewStyle } from "react-native";
 import { useAssets } from "expo-asset";
 import { Link, router } from "expo-router";
 import { useThemeColor } from "@/hooks/useThemeColor";
@@ -20,6 +20,8 @@ export default function Page() {
   const [password,setPassword] = useState("")
   const [error,setError] = useState("")
   const [loading,setLoading] = useState(false)
+  const fontSizeStyle:StyleProp<TextStyle> = {fontSize:fontSize};
+  const SnackBarStyle:StyleProp<ViewStyle> = {backgroundColor:colorError}
   const handleLogin =async ()=>  {
       setLoading(true)
       const res = await logIn(username,password)
@@ -43,7 +45,7 @@ export default function Page() {
           label="Username"
           onChangeText={(username) => setUserName( username )}
           right={<TextInput.Icon icon="account" />}
-          style={{fontSize:fontSize}}
+          style={fontSizeStyle}
         />
         <TextInput
           value={password}
@@ -53,7 +55,7 @@ export default function Page() {
           placeholder={'Password'}
           secureTextEntry={true} 
           right={<TextInput.Icon icon="key" />}
-          style={{fontSize:fontSize}}
+          style={fontSizeStyle}
         />
         <Button
           mode="contained-tonal" 
@@ -68,7 +70,7 @@ export default function Page() {
       ) :<CustomText>Login</CustomText> 
       }</Button>
         <Link  href="/SignUp" asChild><CustomText>Don't Have an account?</CustomText></Link>
-      <Snackbar style={{backgroundColor:colorError}}  duration={5000} onDismiss={() => setVisible(false)} visible={visible}>
+      <Snackbar style={SnackBarStyle}  duration={5000} onDismiss={() => setVisible(false)} visible={visible}>
        <CustomText>{error}</CustomText>
       </Snackbar>
       </ThemedView>
