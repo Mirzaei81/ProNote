@@ -19,7 +19,7 @@ export default function CreatePage({ navigation, route }:any){
 
     const colorError = useThemeColor({}, "error")
     const onError = useThemeColor({}, "onError")
-    const primary = useThemeColor({}, "primary")
+    const onPrimary = useThemeColor({}, "onPrimary")
     const {session} = useSession()
     const router = useRouter()
 
@@ -64,7 +64,7 @@ export default function CreatePage({ navigation, route }:any){
     }
     useLayoutEffect(()=>{
         nav.setOptions({
-            headerRight:()=>(<AntDesign name="save" size={32} color={primary}  onPress={()=>setShow(true)} />)
+            headerRight:()=>(<AntDesign name="save" size={32} color={onPrimary}  onPress={()=>setShow(true)} />)
         })
     },[nav])
     

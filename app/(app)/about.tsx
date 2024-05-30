@@ -1,16 +1,19 @@
 import CustomText from "@/components/Text";
 import { ThemedView } from "@/components/ThemedView";
+import { useThemeColor } from "@/hooks/useThemeColor";
+import { FontAwesome } from "@expo/vector-icons";
 import { useAssets } from "expo-asset";
 import { Image } from "expo-image";
-import { Link } from "expo-router";
+import { Link, router } from "expo-router";
 import { StatusBar, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Page () {
     const assets = useAssets([require("../../assets/images/logo.png")])
+    const onBackground =useThemeColor({},"onBackground")
     return (
       <ThemedView className="p-2 h-full flex items-center" style={styles.topBar} >
-        <CustomText className="text-center m-10" variant="titleLarge">about us</CustomText>
+        <Link href="/" asChild><CustomText className="text-center m-10" variant="titleLarge">About us</CustomText></Link>
         <Link href="/" asChild>
         {/*@ts-expect-error */}
           <Image contentFit="cover" style={styles.image} source={assets[0]} alt="proNote" />
@@ -35,6 +38,7 @@ export default function Page () {
             Thank you for choosing our app for your note-taking needs!
           </CustomText>
         </SafeAreaView>
+        <FontAwesome onPress={()=>router.push("/")} name="home" size={64} color={onBackground}/>
       </ThemedView>
     );
   };

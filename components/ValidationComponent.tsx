@@ -10,9 +10,9 @@ export interface IValidationComponent{
     handler:()=>void
 }
 const primary = useThemeColor({}, "error")
-const onPrimary = useThemeColor({}, "primary")
+const onPrimary = useThemeColor({}, "onPrimary")
 const ClosetButtonStyle: StyleProp<TextStyle> = {backgroundColor: primary,width:125 }
-const HomeButtonStyle: StyleProp<TextStyle> = { color: onPrimary,width:125 }
+const SaveButtonStyle: StyleProp<TextStyle> = { color: onPrimary,width:125 }
 export default function ValidationComponent({show,setShow,loading,handler}:IValidationComponent){
     return(
         <Dialog visible={show} onDismiss={()=>setShow(false)}>
@@ -21,7 +21,7 @@ export default function ValidationComponent({show,setShow,loading,handler}:IVali
                         <View className='flex content-center flex-row justify-around '>{loading ? <ActivityIndicator /> : (
                     <View style={styles.item}>
                         <Button onPress={() => setShow(false)} style={ClosetButtonStyle}><Text>Close</Text></Button>
-                        <Button onPress={handler} style={HomeButtonStyle}><Text >Save</Text></Button>
+                        <Button onPress={handler} style={SaveButtonStyle}><Text >Save</Text></Button>
                             </View>
                         )}
                 </View>
