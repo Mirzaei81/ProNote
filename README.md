@@ -22,8 +22,8 @@ The ProNote App is a React Native application designed to provide a seamless not
 ## Installation
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/Arsalan0098/Arsalan.git
-   cd Arsalan
+   git clone https://github.com/Mirzaei81/ProNote
+   cd ProNote
    ```
 2. **Install Expo CLI:**
    ```bash
