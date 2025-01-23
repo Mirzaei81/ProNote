@@ -4,6 +4,10 @@
 
 ## Introduction
 The ProNote App is a React Native application designed to provide a seamless note-taking experience. Users can create, edit, organize, and search for notes, with a responsive design suitable for both mobile and desktop devices.
+![Screenshot_2025-01-23-08-59-24-044-edit_host exp exponent 1](https://github.com/user-attachments/assets/7520cf13-16a4-4768-880f-0cba366aa8e2)
+![Screenshot_2025-01-23-09-07-41-221_host exp exponent 1](https://github.com/user-attachments/assets/94d97153-cabf-4a68-a7da-d2a1876c9152)
+![Screenshot_2025-01-23-08-59-44-089-edit_host exp exponent 1](https://github.com/user-attachments/assets/296df1de-83c9-484c-8db2-f38cb95c7829)
+![Screenshot_2025-01-23-08-59-24-044-edit_host exp exponent 1](https://github.com/user-attachments/assets/017418d3-419e-46c2-a972-3c36d13fd540)
 
 ## Features
 - **Create Notes:** Add new notes with titles and content.
